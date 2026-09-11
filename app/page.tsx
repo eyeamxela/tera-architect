@@ -2,7 +2,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { flushSync } from 'react-dom';
 import {
-  Layers3,
   Map,
   FileText,
   Users,
@@ -446,7 +445,7 @@ export default function Home() {
           aria-label="Ojai Permaculture projects"
         >
           <div className="brandmark">
-            <Layers3 size={22} />
+            <Sprout size={28} />
           </div>
           <div>
             <strong>OJAI</strong>
@@ -454,7 +453,7 @@ export default function Home() {
           </div>
         </button>
         <div className="workspace-name">
-          Ojai Permaculture <span className="studio-divider" /> Workspace
+          Landscape studio <span className="studio-divider" /> Connor
         </div>
         <div className="topbar-right">
           <button

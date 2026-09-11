@@ -64,3 +64,9 @@ The Client portal now opens as a whole-property proposal inspired by the workflo
 - Installation, contingency, and five-year tree care reuse the existing planning model. Print styles include both reference renders. Proposal approval, change requests, and comments remain session-only demo actions.
 - Reference assets: `public/keyline-aerial-concept.png` and `public/keyline-established-vision.png`. Regrarians photography and site plan were not copied into the product.
 - Design reference sources: https://www.regrarians.org/manna-hill-estate ; https://www.regrarians.org/regrarians-platform ; https://keyline.com.au/detail01.htm .
+
+## Unified organic-modern workspace
+
+The full workspace now extends the client proposal's light paper and olive palette, serif headings, restrained borders, and spacious layout. Projects, site lookup, planning, property measurement, scope editing, client presentation, portal menus, and dialogs use shared light-theme tokens. `app/studio.css` defines the studio-wide layout and typography; `app/globals.css` retains the existing component structures and responsive behavior with semantic colors. Aerial overlays retain their own contrasting map palette. Investment and terrain charts use light-theme colors, while standalone concept drawing exports retain explicit portable colors.
+
+The change is visual: quantities, GIS lookup, budgets, sharing revisions, and session-only demo behavior are unchanged.

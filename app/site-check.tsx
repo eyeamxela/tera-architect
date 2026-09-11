@@ -674,14 +674,14 @@ export default function SiteCheck({
                         x2="850"
                         y1={py(min + (max - min) * f)}
                         y2={py(min + (max - min) * f)}
-                        stroke="#344939"
+                        stroke="#c5d0ba"
                         strokeDasharray="4 5"
                       />
                       <text
                         x="50"
                         y={py(min + (max - min) * f) + 4}
                         textAnchor="end"
-                        fill="#a9bca6"
+                        fill="#566c4d"
                         fontSize="12"
                       >
                         {(min + (max - min) * f).toFixed(0)} ft
@@ -691,7 +691,7 @@ export default function SiteCheck({
                   <path
                     d={profilePath}
                     fill="none"
-                    stroke="#d2e59e"
+                    stroke="#476a38"
                     strokeWidth="3"
                   />
                   {site.profile
@@ -702,17 +702,17 @@ export default function SiteCheck({
                         cx={px(p.distanceFt)}
                         cy={py(p.elevationFt!)}
                         r="3"
-                        fill="#d2e59e"
+                        fill="#476a38"
                       />
                     ))}
-                  <text x="60" y="209" fill="#9aaf9b" fontSize="13">
+                  <text x="60" y="209" fill="#566c4d" fontSize="13">
                     A · west
                   </text>
                   <text
                     x="850"
                     y="209"
                     textAnchor="end"
-                    fill="#9aaf9b"
+                    fill="#566c4d"
                     fontSize="13"
                   >
                     B · east

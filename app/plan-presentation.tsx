@@ -42,14 +42,14 @@ export function InvestmentChart({ plan }: { plan: PlanResult }) {
               y1={y(max * t)}
               x2="745"
               y2={y(max * t)}
-              stroke="#304339"
+              stroke="#c5d0ba"
               strokeDasharray="3 5"
             />
             <text
               x="46"
               y={y(max * t) + 4}
               textAnchor="end"
-              fill="#95aa9b"
+              fill="#566c4d"
               fontSize="11"
             >
               {money(max * t)}
@@ -59,18 +59,18 @@ export function InvestmentChart({ plan }: { plan: PlanResult }) {
         <path
           d={path('install')}
           fill="none"
-          stroke="#6d9278"
+          stroke="#81946e"
           strokeWidth="2"
         />
-        <path d={path('total')} fill="none" stroke="#bfe4bb" strokeWidth="3" />
+        <path d={path('total')} fill="none" stroke="#3f6437" strokeWidth="3" />
         {plan.years.map((v) => (
           <g key={v.year}>
-            <circle cx={x(v.year)} cy={y(v.total)} r="4" fill="#bfe4bb" />
+            <circle cx={x(v.year)} cy={y(v.total)} r="4" fill="#3f6437" />
             <text
               x={x(v.year)}
               y="202"
               textAnchor="middle"
-              fill="#a7bbad"
+              fill="#566c4d"
               fontSize="12"
             >
               {v.year ? `Year ${v.year}` : 'Start'}
