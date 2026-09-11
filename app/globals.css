@@ -2634,3 +2634,688 @@ h2 {
     display: none;
   }
 }
+
+/* Connor's planning desk */
+.planning-view {
+  padding: 8px 28px 32px;
+  max-width: 1800px;
+  margin: auto;
+}
+.planning-title,
+.scenario-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 18px 0 24px;
+}
+.planning-title h2 {
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.8px;
+  margin: 6px 0;
+}
+.planning-title p,
+.scenario-heading p {
+  font-size: 14px;
+  color: #92a69c;
+  margin: 0;
+}
+.planning-grid {
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr);
+  gap: 22px;
+}
+.planning-controls,
+.planning-panel,
+.scenario-card {
+  background: #101f1b;
+  border: 1px solid #293d33;
+  border-radius: 12px;
+}
+.planning-controls {
+  padding: 22px;
+  height: fit-content;
+}
+.planning-input {
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  margin: 25px 0 17px;
+}
+.planning-input > span {
+  min-width: 0;
+}
+.planning-input small {
+  display: block;
+  color: #8c9f95;
+  font-size: 12px;
+  margin-top: 4px;
+}
+.planning-input input {
+  width: 122px;
+  font-size: 18px;
+  text-align: right;
+  font-family: var(--font-geist-mono);
+}
+.planning-input [data-slot='select-trigger'] {
+  width: 150px;
+}
+.planning-input b {
+  white-space: nowrap;
+  color: #b3dcc3;
+  font-weight: 500;
+}
+.planning-small-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  border-top: 1px solid #293d33;
+  margin-top: 24px;
+  padding-top: 24px;
+}
+.planning-small-inputs label {
+  font-size: 12px;
+  color: #a7b9af;
+}
+.planning-small-inputs input {
+  margin-top: 8px;
+  font-size: 16px;
+}
+.planning-note {
+  font-size: 12px;
+  color: #8fa298;
+  line-height: 1.65;
+  margin: 16px 0 0;
+}
+.budget-breakdown {
+  margin: 23px 0;
+  border-top: 1px solid #293d33;
+  padding-top: 12px;
+}
+.budget-breakdown > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 10px 0;
+  font-size: 13px;
+}
+.budget-breakdown span {
+  color: #a7b9af;
+}
+.planning-results {
+  min-width: 0;
+}
+.investment-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin: 3px 0 24px;
+}
+.investment-stats > div {
+  border-left: 1px solid #35503f;
+  padding-left: 20px;
+}
+.investment-stats > div:first-child {
+  padding-left: 0;
+  border: 0;
+}
+.investment-stats span {
+  font: 11px var(--font-geist-mono);
+  letter-spacing: 0.6px;
+  color: #9aada2;
+}
+.investment-stats strong {
+  display: block;
+  font-size: clamp(25px, 3vw, 39px);
+  font-weight: 400;
+  letter-spacing: -1.5px;
+  margin: 6px 0;
+  color: #d7f1d9;
+}
+.investment-stats small {
+  font-size: 12px;
+  color: #8fa298;
+}
+.planning-panel {
+  padding: 23px;
+  margin-top: 20px;
+}
+.planning-panel-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.planning-panel-title h3 {
+  font-size: 19px;
+  font-weight: 500;
+  margin: 6px 0 0;
+}
+.phase-list {
+  margin-top: 22px;
+}
+.plan-phase {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-top: 1px solid #293d33;
+  padding: 19px 0;
+}
+.phase-number {
+  width: 33px;
+  height: 33px;
+  display: grid;
+  place-items: center;
+  background: #233c2f;
+  color: #b3dcc3;
+  font: 13px var(--font-geist-mono);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.plan-phase > div {
+  flex: 1;
+}
+.plan-phase b {
+  font-size: 14px;
+  font-weight: 500;
+}
+.plan-phase p,
+.plan-phase small {
+  font-size: 12px;
+  color: #95a79d;
+  margin: 5px 0 0;
+}
+.plan-phase > span:last-child {
+  text-align: right;
+}
+.plan-phase small {
+  display: block;
+}
+.plan-phase.deferred {
+  opacity: 0.65;
+}
+.plan-phase.deferred .phase-number {
+  background: #2b2e25;
+  color: #d6c896;
+}
+.year-selector {
+  display: flex;
+  border: 1px solid #354b3d;
+  border-radius: 7px;
+  padding: 3px;
+}
+.year-selector button {
+  width: 32px;
+  height: 31px;
+  padding: 0;
+}
+.outcome-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 25px;
+}
+.outcome-grid svg {
+  width: 20px;
+  color: #90b998;
+}
+.outcome-grid strong {
+  display: block;
+  font-size: 32px;
+  font-weight: 400;
+  color: #e1eddf;
+  margin: 9px 0 5px;
+}
+.outcome-grid em {
+  font-size: 16px;
+  font-style: normal;
+  color: #95a79d;
+}
+.outcome-grid b,
+.outcome-grid small {
+  display: block;
+  font-size: 14px;
+  font-weight: 400;
+}
+.outcome-grid small {
+  font-size: 12px;
+  color: #95a79d;
+  margin-top: 6px;
+}
+.scenario-heading {
+  margin: 30px 0 18px;
+}
+.scenario-heading h3 {
+  margin: 5px 0 0;
+  font-size: 23px;
+  font-weight: 500;
+}
+.scenario-heading p {
+  max-width: 370px;
+  line-height: 1.6;
+}
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.scenario-card {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+.scenario-card h3 {
+  font-size: 18px;
+  margin: 0;
+  font-weight: 500;
+}
+.scenario-card > p {
+  font-size: 13px;
+  color: #98aba0;
+  line-height: 1.6;
+  min-height: 42px;
+  margin: 9px 0 17px;
+}
+.scenario-card > strong {
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: -0.7px;
+}
+.scenario-card > strong small {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 0;
+  color: #98aba0;
+  margin-top: 4px;
+}
+.scenario-card dl {
+  margin: 22px 0;
+  flex: 1;
+}
+.scenario-card dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 0;
+  border-top: 1px solid #293d33;
+  font-size: 13px;
+}
+.scenario-card dt {
+  color: #98aba0;
+}
+.scenario-card dd {
+  margin: 0;
+}
+.planning-view .eyebrow {
+  font-size: 11px;
+}
+.main-tabs {
+  overflow-x: auto;
+  max-width: 100%;
+}
+.nav-row {
+  gap: 10px;
+}
+.main-tabs [data-slot='tabs-trigger'] {
+  white-space: nowrap;
+}
+@media (max-width: 1100px) {
+  .planning-grid {
+    grid-template-columns: 250px minmax(0, 1fr);
+  }
+  .planning-view {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .investment-stats {
+    gap: 12px;
+  }
+  .investment-stats > div {
+    padding-left: 12px;
+  }
+  .planning-panel-title {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .nav-meta {
+    display: none;
+  }
+  .planning-controls {
+    padding: 17px;
+  }
+}
+@media (max-width: 760px) {
+  .planning-title,
+  .scenario-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .planning-title h2 {
+    font-size: 24px;
+  }
+  .planning-grid {
+    grid-template-columns: 1fr;
+  }
+  .planning-controls {
+    display: block;
+  }
+  .planning-input {
+    margin-top: 18px;
+  }
+  .scenario-grid {
+    grid-template-columns: 1fr;
+  }
+  .investment-stats {
+    margin-top: 10px;
+  }
+  .investment-stats span {
+    font-size: 10px;
+  }
+  .investment-stats strong {
+    font-size: 24px;
+  }
+  .investment-stats small {
+    font-size: 11px;
+  }
+  .planning-panel {
+    padding: 18px;
+  }
+  .outcome-grid {
+    gap: 12px;
+  }
+  .outcome-grid strong {
+    font-size: 26px;
+  }
+  .outcome-grid b {
+    font-size: 13px;
+  }
+  .plan-phase {
+    gap: 10px;
+  }
+  .plan-phase b {
+    font-size: 13px;
+  }
+  .planning-title .primary-action {
+    width: 100%;
+  }
+  .planning-view {
+    padding: 0 14px 24px;
+  }
+}
+@media print {
+  .planning-view {
+    padding: 0;
+    max-width: none;
+  }
+  .planning-controls,
+  .planning-title button,
+  .scenario-grid,
+  .scenario-heading,
+  .year-selector {
+    display: none !important;
+  }
+  .planning-grid {
+    display: block;
+  }
+  .planning-panel,
+  .investment-stats,
+  .plan-phase {
+    break-inside: avoid;
+  }
+  .planning-panel {
+    background: white;
+    color: #172d20;
+    border-color: #aaa;
+  }
+  .investment-stats strong,
+  .outcome-grid strong {
+    color: #172d20;
+  }
+  .planning-panel h3,
+  .planning-panel b,
+  .outcome-grid b {
+    color: #172d20;
+  }
+  .planning-note,
+  .planning-panel small,
+  .plan-phase p {
+    color: #555;
+  }
+}
+.investment-chart {
+  border-top: 1px solid #2b4034;
+  margin-top: 25px;
+  padding-top: 18px;
+}
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.chart-header h4 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+.chart-header > span {
+  font-size: 11px;
+  color: #a5b8aa;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.chart-header i {
+  width: 15px;
+  height: 2px;
+  background: #6d9278;
+  display: inline-block;
+}
+.chart-header i.care-line {
+  background: #bfe4bb;
+  margin-left: 10px;
+}
+.investment-chart > svg {
+  width: 100%;
+  display: block;
+  margin-top: 12px;
+  overflow: visible;
+}
+.chart-data {
+  font-size: 12px;
+  color: #a1b5a6;
+}
+.chart-data summary {
+  cursor: pointer;
+  width: fit-content;
+}
+.table-scroll {
+  overflow: auto;
+}
+.chart-data table {
+  width: 100%;
+  margin-top: 16px;
+  text-align: right;
+  border-collapse: collapse;
+  min-width: 400px;
+}
+.chart-data caption {
+  text-align: left;
+  margin-bottom: 10px;
+}
+.chart-data th,
+.chart-data td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #354b3c;
+}
+.chart-data th:first-child {
+  text-align: left;
+}
+.concept-section {
+  margin-top: 32px;
+  break-before: page;
+}
+.concept-section h3 {
+  font-weight: 500;
+  font-size: 22px;
+  margin: 5px 0;
+}
+.concept-drawing {
+  border-radius: 9px;
+  overflow: hidden;
+  border: 1px solid #809797;
+}
+.concept-drawing > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.drawing-actions {
+  display: flex;
+  gap: 8px;
+}
+.client-investment {
+  padding: 26px;
+  border: 1px solid #293d33;
+  border-radius: 12px;
+  background: #101f1b;
+  margin-top: 24px;
+}
+.client-investment .investment-stats {
+  margin-top: 30px;
+}
+.client-growth-years {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin-top: 25px;
+}
+.client-growth-years > div {
+  border-left: 2px solid #648b67;
+  padding-left: 18px;
+}
+.client-growth-years span {
+  font: 12px var(--font-geist-mono);
+  color: #b5d4b8;
+}
+.client-growth-years h4 {
+  font-size: 16px;
+  margin: 10px 0;
+  font-weight: 500;
+}
+.client-growth-years p,
+.client-growth-years small {
+  font-size: 13px;
+  color: #9ab19f;
+  line-height: 1.6;
+}
+.deferred-callout {
+  background: #27291e;
+  border: 1px solid #494933;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-top: 24px;
+  font-size: 14px;
+}
+.deferred-callout p {
+  margin: 8px 0;
+}
+.deferred-callout small {
+  color: #c0c1a1;
+  font-size: 12px;
+}
+.share-planning {
+  border: 1px solid #385140;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 18px 0;
+}
+.share-planning > div {
+  display: flex;
+  gap: 15px;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.share-planning p {
+  font-size: 12px;
+  color: #9ab19f;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+@media (max-width: 760px) {
+  .client-growth-years {
+    grid-template-columns: 1fr;
+  }
+  .client-investment {
+    padding: 18px;
+  }
+  .drawing-actions {
+    flex-wrap: wrap;
+  }
+  .concept-section .planning-panel-title {
+    display: block;
+  }
+  .drawing-actions {
+    margin-top: 15px;
+  }
+  .concept-drawing {
+    overflow: auto;
+  }
+  .concept-drawing > svg {
+    min-width: 650px;
+  }
+}
+@media print {
+  .planning-view *,
+  .client-investment * {
+    color: #193a2b !important;
+  }
+  .planning-title {
+    display: block;
+  }
+  .drawing-actions,
+  .chart-data {
+    display: none !important;
+  }
+  .investment-chart {
+    break-inside: avoid;
+  }
+  .concept-drawing > svg {
+    min-width: 0;
+    max-height: 24cm;
+  }
+  .concept-drawing {
+    overflow: visible;
+    border: 0;
+  }
+  .client-investment {
+    background: white;
+    padding: 0;
+    border: 0;
+  }
+  .client-growth-years {
+    break-inside: avoid;
+  }
+  .deferred-callout {
+    background: white;
+  }
+  .client-investment .concept-section {
+    break-before: page;
+  }
+  .scenario-grid {
+    display: none;
+  }
+  .planning-panel {
+    margin-top: 12px;
+  }
+  .planning-view .planning-note {
+    color: #555 !important;
+  }
+}

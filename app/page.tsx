@@ -44,6 +44,8 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import LandMap from './land-map';
+import PlanningView from './planning-view';
+import { calculatePlan } from './plan-model';
 import { ProjectList, ScopeView, ClientView } from './views';
 import {
   projects as sampleProjects,
@@ -78,7 +80,7 @@ function FeatureIcon({ kind, size = 17 }: { kind: string; size?: number }) {
 }
 
 export default function Home() {
-  const [view, setView] = useState('workspace');
+  const [view, setView] = useState('planning');
   const [projects, setProjects] = useState(sampleProjects);
   const [projectId, setProjectId] = useState('NC-024');
   const [jobs, setJobs] = useState<Record<string, Job>>(() =>
@@ -113,6 +115,7 @@ export default function Home() {
   const rows = scopeRows(job.features, job.scale, job.spacing);
   const total = rows.reduce((s, r) => s + r.total, 0);
   const dirty = job.shared?.revision !== job.revision;
+  const investment = calculatePlan(rows, job.features, job.planning);
   const notify = (text: string) => {
     setNotice(text);
     if (noticeTimer.current) clearTimeout(noticeTimer.current);
@@ -134,7 +137,7 @@ export default function Home() {
     fileRequest.current++;
     setProjectId(id);
     setSelected(jobs[id]?.features[0]?.id || '');
-    setView('workspace');
+    setView('planning');
   };
   const approve = () => {
     patchJob((j) =>
@@ -171,6 +174,7 @@ export default function Home() {
     patchJob((j) => ({
       ...j,
       shared: {
+        planning: { ...j.planning },
         revision: j.revision,
         features: structuredClone(j.features),
         rows: scopeRows(j.features, j.scale, j.spacing),
@@ -269,7 +273,68 @@ export default function Home() {
                 : null,
             })),
             total,
+            planning: job.planning,
+            investment: calculatePlan(
+              scopeRows(job.features, job.scale, job.spacing),
+              job.features,
+              job.planning,
+            ).years,
+            sharedPlanning: job.shared?.planning,
             clientStatus: job.shared?.status || 'Not shared',
+          };
+        },
+      },
+      {
+        name: 'set_demo_investment_plan',
+        title: 'Set demo investment budget and timeline',
+        description:
+          'Set the visible draft installation budget and window. Recalculates funded work and five-year allowances. Does not alter the shared client copy or send messages.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            budget: { type: 'number', minimum: 0, maximum: 10000000 },
+            months: { type: 'integer', minimum: 6, maximum: 60, multipleOf: 6 },
+          },
+          required: ['budget', 'months'],
+          additionalProperties: false,
+        },
+        annotations: { readOnlyHint: false, untrustedContentHint: false },
+        execute: (input: unknown) => {
+          const i = input as { budget: number; months: number };
+          if (
+            !i ||
+            typeof i !== 'object' ||
+            Object.keys(i).some((k) => !['budget', 'months'].includes(k)) ||
+            !Number.isFinite(i.budget) ||
+            i.budget < 0 ||
+            i.budget > 1e7 ||
+            !Number.isInteger(i.months) ||
+            i.months < 6 ||
+            i.months > 60 ||
+            i.months % 6 !== 0
+          )
+            throw Error(
+              'Provide budget 0–10000000 and months 6–60 in six-month increments.',
+            );
+          flushSync(() => {
+            readRef.current.edit((j) => ({
+              ...j,
+              planning: { ...j.planning, budget: i.budget, months: i.months },
+            }));
+            readRef.current.setView('planning');
+          });
+          const j = readRef.current.job;
+          const p = calculatePlan(
+            scopeRows(j.features, j.scale, j.spacing),
+            j.features,
+            j.planning,
+          );
+          return {
+            demo: true,
+            revision: j.revision,
+            planning: j.planning,
+            funded: p.funded.map((f) => f.name),
+            fiveYearAllowance: p.atYear(5).total,
           };
         },
       },
@@ -338,18 +403,18 @@ export default function Home() {
         <button
           className="brand brand-button"
           onClick={() => setView('projects')}
-          aria-label="Groundwork projects"
+          aria-label="Ojai Permaculture projects"
         >
           <div className="brandmark">
             <Layers3 size={22} />
           </div>
           <div>
-            <strong>GROUNDWORK</strong>
-            <span>LAND & CLIENTS</span>
+            <strong>OJAI</strong>
+            <span>PERMACULTURE</span>
           </div>
         </button>
         <div className="workspace-name">
-          Fieldwork Studio <span className="studio-divider" /> Workspace
+          Ojai Permaculture <span className="studio-divider" /> Workspace
         </div>
         <div className="topbar-right">
           <button
@@ -363,7 +428,7 @@ export default function Home() {
           <span className="demo-badge">
             <i /> INTERACTIVE DEMO
           </span>
-          <span className="avatar">JD</span>
+          <span className="avatar">C</span>
         </div>
       </header>
       <Tabs
@@ -375,6 +440,9 @@ export default function Home() {
           <TabsList className="main-tabs">
             <TabsTrigger value="projects">
               <Users size={16} /> Projects
+            </TabsTrigger>
+            <TabsTrigger value="planning">
+              <Sprout size={16} /> Plan & investment
             </TabsTrigger>
             <TabsTrigger value="workspace">
               <Map size={16} /> Property workspace
@@ -411,7 +479,7 @@ export default function Home() {
                     className="property-picker"
                     aria-label="Select property"
                   >
-                    <SelectValue />
+                    <SelectValue>{project.name}</SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {projects.map((p) => (
@@ -459,6 +527,15 @@ export default function Home() {
             </div>
           </div>
         )}
+        <TabsContent value="planning" className="tab-panel">
+          <PlanningView
+            job={job}
+            project={project}
+            onChange={(planning) => edit((j) => ({ ...j, planning }))}
+            onMap={() => setView('workspace')}
+            onShare={() => setDialog('share')}
+          />
+        </TabsContent>
         <TabsContent value="workspace" className="tab-panel">
           <div className="workspace-grid">
             <aside className="left-panel">
@@ -793,11 +870,11 @@ export default function Home() {
                     <ArrowUpRight size={15} />
                   </Button>
                   <div className="detail-foot">
-                    <span className="avatar small">JD</span>
+                    <span className="avatar small">C</span>
                     <span>
-                      Prepared by Jamie Davis
+                      Prepared by Connor
                       <br />
-                      <small>Fieldwork Studio</small>
+                      <small>Ojai Permaculture</small>
                     </span>
                   </div>
                 </>
@@ -845,7 +922,7 @@ export default function Home() {
         <span>
           <i />{' '}
           {view === 'projects'
-            ? 'FIELDWORK STUDIO'
+            ? 'OJAI PERMACULTURE'
             : project.name.toUpperCase() + ' · ' + project.id}
         </span>
         <span>Planning → Scope → Client review → Fieldwork</span>
@@ -1198,11 +1275,30 @@ export default function Home() {
                 <span>
                   Revision {job.revision} · {rows.length} work areas
                 </span>
-                <b>{money(total)}</b>
+                <b>{money(total)} full base scope</b>
+              </div>
+              <div className="share-planning">
+                <div>
+                  <span>Funded work + contingency</span>
+                  <b>{money(investment.allowance)}</b>
+                </div>
+                <div>
+                  <span>Five-year tree care</span>
+                  <b>{money(investment.atYear(5).care)}</b>
+                </div>
+                <div>
+                  <span>Installation window</span>
+                  <b>{job.planning.months} months</b>
+                </div>
+                <p>
+                  {investment.funded.length} of {investment.phases.length} work
+                  areas funded. Deferred work stays outside the funded proposal.
+                </p>
               </div>
               <p className="muted-copy">
-                This creates a fixed client copy. Later edits stay in your draft
-                until you share again.
+                This freezes the drawing, budget, schedule, and assumptions for
+                the client. Later edits stay in your draft until you share
+                again.
               </p>
               <Button
                 className="primary-action wide"
@@ -1219,10 +1315,10 @@ export default function Home() {
           {dialog === 'intake' && (
             <>
               <div className="telegram-message">
-                <span className="avatar">JD</span>
+                <span className="avatar">C</span>
                 <div>
                   <b>
-                    Jamie · Field notes <small>9:41 AM</small>
+                    Connor · Field notes <small>9:41 AM</small>
                   </b>
                   <p>{fieldNote}</p>
                   <div className="attachment-pill">

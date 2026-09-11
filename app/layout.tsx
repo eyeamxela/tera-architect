@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Groundwork · Land & Clients',
+  title: 'Ojai Permaculture · Client Planning',
   description:
-    'A visual workspace for land projects, scopes, and client collaboration.',
+    'Explore property concept plans, phased budgets, and the landscape over time with Connor.',
 };
 
 export default function RootLayout({

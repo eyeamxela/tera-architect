@@ -1,3 +1,4 @@
+import { defaultPlanning, type Planning } from './plan-model.ts';
 export type Point = [number, number];
 export type Feature = {
   id: string;
@@ -21,9 +22,9 @@ export type Project = {
 export const projects: Project[] = [
   {
     id: 'NC-024',
-    name: 'North Creek Farm',
+    name: 'Creekside Homestead',
     client: 'Emma & James Smith',
-    location: 'Sonoma County, CA',
+    location: 'Ojai Valley, CA',
     acres: 42.6,
     stage: 'Scoping',
     initials: 'ES',
@@ -140,6 +141,7 @@ export type ScopeRow = {
   total: number;
 };
 export type SharedScope = {
+  planning: Planning;
   revision: number;
   rows: ScopeRow[];
   features: Feature[];
@@ -151,6 +153,7 @@ export type SharedScope = {
   total: number;
 };
 export type Job = {
+  planning: Planning;
   features: Feature[];
   scale: number;
   spacing: number;
@@ -193,6 +196,7 @@ export function makeJob(empty = false): Job {
   const features = empty ? [] : structuredClone(initialFeatures);
   const rows = scopeRows(features, 1.2, 25);
   return {
+    planning: { ...defaultPlanning },
     features,
     scale: empty ? 0 : 1.2,
     spacing: 25,
@@ -202,6 +206,7 @@ export function makeJob(empty = false): Job {
     shared: empty
       ? null
       : {
+          planning: { ...defaultPlanning },
           revision: 3,
           rows,
           features: structuredClone(features),

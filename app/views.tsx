@@ -1,5 +1,7 @@
 'use client';
 import { useState } from 'react';
+import { calculatePlan } from './plan-model';
+import { ClientInvestment } from './plan-presentation';
 import {
   ArrowDownToLine,
   ArrowRight,
@@ -249,7 +251,7 @@ export function ScopeView({
     <section className="scope-layout">
       <div className="scope-document">
         <div className="document-masthead">
-          <span className="eyebrow">FIELDWORK STUDIO</span>
+          <span className="eyebrow">OJAI PERMACULTURE</span>
           <span>
             PROPOSAL · {project.id} / {String(job.revision).padStart(2, '0')}
           </span>
@@ -403,7 +405,7 @@ export function ScopeView({
           <span>
             Prepared with care.
             <br />
-            <b>Jamie Davis · Fieldwork Studio</b>
+            <b>Connor · Ojai Permaculture</b>
           </span>
           <span>
             {project.id} · REV {String(job.revision).padStart(2, '0')}
@@ -413,7 +415,7 @@ export function ScopeView({
       <aside className="scope-summary">
         <div className="section-label">PROPOSAL SUMMARY</div>
         <div className="summary-value">
-          <small>Estimated project total</small>
+          <small>Full scope before contingency</small>
           <strong>{job.scale ? money(total) : '—'}</strong>
           <span>USD · sample rates</span>
         </div>
@@ -496,6 +498,9 @@ export function ClientView({
   const [comment, setComment] = useState('');
   const [selected, setSelected] = useState('pond');
   const shared = job.shared;
+  const plan = shared
+    ? calculatePlan(shared.rows, shared.features, shared.planning)
+    : null;
   const sendComment = () => {
     if (comment.trim()) {
       onComment(comment.trim());
@@ -517,14 +522,14 @@ export function ClientView({
       </div>
       <div className="client-heading">
         <div>
-          <div className="eyebrow">FIELDWORK STUDIO / YOUR PROPERTY</div>
+          <div className="eyebrow">OJAI PERMACULTURE / YOUR PROPERTY</div>
           <h1>{project.name}</h1>
           <p>A shared place for your plans, decisions, and progress.</p>
         </div>
         <div className="client-contact">
-          <span className="avatar">JD</span>
+          <span className="avatar">C</span>
           <div>
-            <b>Jamie Davis</b>
+            <b>Connor</b>
             <span>Your project lead</span>
           </div>
         </div>
@@ -573,11 +578,13 @@ export function ClientView({
           <div className="client-grid">
             <div className="client-plan">
               <div className="client-section-heading">
-                <h2>Your property plan</h2>
+                <h2>Your funded work areas</h2>
                 <span>REVISION {String(shared.revision).padStart(2, '0')}</span>
               </div>
               <LandMap
-                features={shared.features.filter((f) => f.included)}
+                features={shared.features.filter((f) =>
+                  plan?.funded.some((p) => p.id === f.id),
+                )}
                 selected={selected}
                 onSelect={setSelected}
                 boundary={true}
@@ -622,11 +629,11 @@ export function ClientView({
                     : 'Review the proposed improvements and let us know what you think.'}
               </p>
               <div className="client-cost">
-                <span>Proposed investment</span>
-                <strong>{money(shared.total)}</strong>
+                <span>Funded installation + contingency</span>
+                <strong>{money(plan!.allowance)}</strong>
                 <small>Sample estimate · Revision {shared.revision}</small>
               </div>
-              {shared.rows.map((r) => (
+              {plan!.funded.map((r) => (
                 <div className="client-scope-row" key={r.id}>
                   <Check size={14} />
                   <span>
@@ -635,7 +642,7 @@ export function ClientView({
                       {r.quantity.toLocaleString()} {r.unit}
                     </small>
                   </span>
-                  <b>{money(r.total)}</b>
+                  <b>{money(r.allowance)}</b>
                 </div>
               ))}
               <Button
@@ -663,6 +670,7 @@ export function ClientView({
               </Button>
             </aside>
           </div>
+          <ClientInvestment shared={shared} project={project} />
           <div className="client-bottom-grid">
             <div className="conversation">
               <div className="client-section-heading">
@@ -750,7 +758,7 @@ export function ClientView({
           </div>
           <div className="client-print-details">
             <h2>Scope details</h2>
-            {shared.rows.map((r) => (
+            {plan!.funded.map((r) => (
               <div key={r.id}>
                 <h3>{r.name}</h3>
                 <p>{r.description}</p>
