@@ -16,6 +16,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Feature, Point, plantingPoints } from './data';
 type Props = {
+  fit?: 'contain' | 'cover';
   parcelRings?: Point[][];
   imageLabel?: string;
   features: Feature[];
@@ -33,6 +34,7 @@ type Props = {
   revision?: number;
 };
 export default function LandMap({
+  fit = 'cover',
   features,
   parcelRings,
   imageLabel,
@@ -67,7 +69,9 @@ export default function LandMap({
       </div>
       <svg
         viewBox={`0 0 1200 ${imageHeight}`}
-        preserveAspectRatio="xMidYMid slice"
+        preserveAspectRatio={
+          fit === 'contain' ? 'xMidYMid meet' : 'xMidYMid slice'
+        }
         className="aerial-canvas"
         aria-label="Interactive property plan"
         onClick={(e) => {

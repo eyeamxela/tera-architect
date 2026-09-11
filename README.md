@@ -25,7 +25,6 @@ Draft edits increment the revision once after a share. A shared proposal stores 
 
 The two WebMCP contracts were exercised through the supported browser context: read state, valid spacing change and readback, and invalid spacing rejection. General browser screenshot/interaction QA was not performed because it was not requested.
 
-
 ## Ojai Permaculture planning desk
 
 The opening view now lets Connor compare an installation budget, a 6–60 month implementation window, work priority, contingency, and annual tree care. Costs and quantities come from the mapped scope. Whole phases are funded in order; an unaffordable phase defers all subsequent work. The automatic schedule divides the selected window across all included phases. Tree care is prorated from planting completion through year five, additional to installation funding. No inflation, financial ROI, crop yield, or biological maturity is modeled.
@@ -35,7 +34,6 @@ The scenario cards compare the same property under three budget/timing assumptio
 Sharing freezes the financial and timing assumptions alongside scope, quantities, and geometry. The client preview shows only funded work as the proposed installation, with deferred phases identified separately. Everything remains session-only demo data.
 
 Validation: 15 geometry/planning tests cover calibration, exclusions, whole-phase affordability, priority, timing, prorated care, empty scope, and snapshot independence. The browser agent interface also verified a $25,000 / 36-month draft, $31,627.05 five-year allowance, unchanged shared settings, and rejection of negative budgets.
-
 
 ## Address, parcel, and terrain pilot
 
@@ -54,3 +52,15 @@ All searches require an explicit submit. Fixed allowlisted provider endpoints, b
 Verified locally with the public Ojai City Hall address: matched PointAddress, selected APN0230090010,8.79 GIS acres, City of Ojai jurisdiction, correctly withheld city zoning,17/17 elevation samples, valid Polygon GeoJSON, live contours, and an empty imported project.21 focused geometry, planning, and GIS tests pass.
 
 Sources: https://gis.ventura.org/arcgis/rest/services/Locator/VenturaCounty_ArcGISProLocator/GeocodeServer ; https://maps.venturacounty.gov/arcgis/rest/services/SDs/Parcels/MapServer/0 ; https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer ; https://rma.venturacounty.gov/divisions/planning/legal-lot-status/ ; https://www.ojai.ca.gov/246/Planning-Zoning-Division ; https://developers.google.com/maps/documentation/embed/embedding-map ; https://qgis.org/ ; https://gdal.org/en/stable/programs/gdal_contour.html .
+
+## Client landscape proposal template
+
+The Client portal now opens as a whole-property proposal inspired by the workflow in [Regrarians' Manna Hill Estate case study](https://www.regrarians.org/manna-hill-estate): survey/context, concept, work quantities, implementation, and ongoing care. The operator workspace and all site-check functions remain available in the tabs.
+
+- Client copy continues to use the frozen shared revision, including geometry, imagery, site records, rates, budget, and schedule. Draft edits do not silently change that copy.
+- Aerial/plan views select work areas, then link to the matching numbered scope package. GIS imports also offer contours, sampled terrain metadata, and source links.
+- Keyline-informed considerations cover landform, water/access, and vegetation. No keyline layout, keypoint, grade, catchment model, soil result, or legal development envelope is generated.
+- Two original AI-generated landscape reference renders illustrate design direction. They are visibly labeled fictional references, are not the selected parcel, and do not establish a particular year or guaranteed outcome. These static assets were generated for this template; there is no live image-generation integration.
+- Installation, contingency, and five-year tree care reuse the existing planning model. Print styles include both reference renders. Proposal approval, change requests, and comments remain session-only demo actions.
+- Reference assets: `public/keyline-aerial-concept.png` and `public/keyline-established-vision.png`. Regrarians photography and site plan were not copied into the product.
+- Design reference sources: https://www.regrarians.org/manna-hill-estate ; https://www.regrarians.org/regrarians-platform ; https://keyline.com.au/detail01.htm .

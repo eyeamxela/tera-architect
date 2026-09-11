@@ -82,7 +82,7 @@ function FeatureIcon({ kind, size = 17 }: { kind: string; size?: number }) {
 }
 
 export default function Home() {
-  const [view, setView] = useState('site');
+  const [view, setView] = useState('client');
   const [projects, setProjects] = useState(sampleProjects);
   const [projectId, setProjectId] = useState('NC-024');
   const [jobs, setJobs] = useState<Record<string, Job>>(() =>
