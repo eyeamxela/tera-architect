@@ -3319,3 +3319,684 @@ h2 {
     color: #555 !important;
   }
 }
+
+.site-check {
+  max-width: 1520px;
+  padding: 32px;
+  margin: auto;
+}
+.site-check-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin: 8px 0 28px;
+}
+.site-check-heading h2 {
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -1px;
+  margin: 8px 0;
+}
+.site-check-heading p {
+  font-size: 16px;
+  color: #9eafa4;
+  margin: 0;
+  line-height: 1.6;
+}
+.site-address-form {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #14231b;
+  border: 1px solid #3a5040;
+  border-radius: 12px;
+}
+.site-address-form > svg {
+  color: #b9d3a7;
+  flex-shrink: 0;
+}
+.site-address-form input {
+  height: 46px;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  font-size: 16px;
+  min-width: 0;
+}
+.site-address-form button {
+  height: 43px;
+  flex-shrink: 0;
+}
+.site-start-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin: 32px 0;
+}
+.site-start-grid article {
+  padding: 26px;
+  background: #111f19;
+  border: 1px solid #2c4132;
+  border-radius: 12px;
+}
+.site-start-grid svg {
+  color: #bad1a8;
+  width: 23px;
+  height: 23px;
+  margin-bottom: 25px;
+}
+.site-start-grid h3 {
+  font-size: 19px;
+  font-weight: 500;
+  margin: 0 0 12px;
+}
+.site-start-grid p {
+  font-size: 14px;
+  color: #a0b09f;
+  line-height: 1.7;
+  margin: 0;
+}
+.site-boundary-note {
+  padding: 22px;
+  border-left: 2px solid #b6b98b;
+  background: #20291d;
+  font-size: 14px;
+}
+.site-boundary-note p {
+  margin: 8px 0 0;
+  color: #b1bda8;
+  line-height: 1.65;
+}
+@media (max-width: 760px) {
+  .site-check {
+    padding: 18px 14px;
+  }
+  .site-check-heading {
+    display: block;
+  }
+  .site-check-heading .status {
+    margin-top: 15px;
+  }
+  .site-address-form {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .site-address-form input {
+    flex: 1;
+  }
+  .site-address-form button {
+    width: 100%;
+  }
+  .site-start-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .site-start-grid article {
+    padding: 22px;
+  }
+  .site-start-grid svg {
+    margin-bottom: 16px;
+  }
+}
+.site-search-helper {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: #8ea28e;
+  margin: 12px 0 24px;
+}
+.site-search-helper button,
+.site-search-helper a,
+.site-check a,
+.site-evidence a {
+  color: #bedba9;
+}
+.site-search-helper button {
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.site-search-helper a {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.site-error {
+  background: #332c1c;
+  border: 1px solid #5f4c2b;
+  border-radius: 8px;
+  padding: 16px 20px;
+  color: #e1cc9d;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 18px 0;
+}
+.site-error p {
+  margin: 4px 0;
+}
+.site-matches {
+  margin: 28px 0;
+}
+.site-matches > button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-align: left;
+  border: 1px solid #304636;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 10px;
+  background: #132219;
+  cursor: pointer;
+}
+.site-matches > button.chosen {
+  border-color: #abc88e;
+  background: #213420;
+}
+.site-matches > button span {
+  flex: 1;
+}
+.site-matches b {
+  font-size: 15px;
+  font-weight: 500;
+}
+.site-matches small {
+  display: block;
+  font-size: 12px;
+  color: #a0b29a;
+  margin-top: 5px;
+}
+.parcel-candidates {
+  margin: 26px 0;
+}
+.parcel-candidates > p {
+  font-size: 14px;
+  color: #a5b6a0;
+  line-height: 1.6;
+}
+.parcel-candidate-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 18px;
+}
+.parcel-candidate-grid button {
+  display: flex;
+  text-align: left;
+  align-items: center;
+  gap: 18px;
+  padding: 16px;
+  background: #14231a;
+  border: 1px solid #314836;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.parcel-candidate-grid button:hover {
+  border-color: #b0ca92;
+}
+.parcel-candidate-grid svg:first-child {
+  width: 90px;
+  flex-shrink: 0;
+  background: #0d1a11;
+  border-radius: 5px;
+}
+.parcel-candidate-grid button > span {
+  flex: 1;
+}
+.parcel-candidate-grid b,
+.parcel-candidate-grid strong,
+.parcel-candidate-grid small {
+  display: block;
+}
+.parcel-candidate-grid b {
+  font-size: 15px;
+}
+.parcel-candidate-grid small {
+  font-size: 12px;
+  color: #97ab91;
+  margin: 5px 0;
+}
+.parcel-candidate-grid strong {
+  font-size: 14px;
+  color: #c5dcb0;
+  font-weight: 400;
+}
+.site-result-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 32px 0 25px;
+}
+.site-result-heading h3 {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 7px 0;
+}
+.site-result-heading p {
+  color: #9dae95;
+  font-size: 14px;
+  margin: 0;
+}
+.site-result-heading > div:last-child {
+  display: flex;
+  gap: 10px;
+}
+.site-kpis {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr 1fr;
+  gap: 20px;
+  margin: 24px 0;
+}
+.site-kpis > div {
+  padding: 19px 22px;
+  background: #15241b;
+  border: 1px solid #324833;
+  border-radius: 10px;
+}
+.site-kpis small {
+  font: 11px var(--font-geist-mono);
+  color: #a9bea0;
+}
+.site-kpis strong {
+  font-size: 29px;
+  font-weight: 400;
+  display: block;
+  color: #e1edcc;
+  margin: 11px 0;
+}
+.site-kpis .zone-value {
+  font-size: 20px;
+  overflow-wrap: anywhere;
+}
+.site-kpis em {
+  font-size: 15px;
+  font-style: normal;
+}
+.site-kpis span {
+  font-size: 12px;
+  color: #9bac91;
+  line-height: 1.7;
+  display: block;
+}
+.site-map-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 22px;
+}
+.site-map-card {
+  overflow: hidden;
+  border: 1px solid #354b39;
+  border-radius: 10px;
+  background: #132119;
+  align-self: start;
+}
+.site-map-toolbar {
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.site-map-toolbar [data-slot='tabs-list'] {
+  background: #1c3020;
+}
+.site-map-toolbar label {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #b3c3a8;
+}
+.site-live-map {
+  position: relative;
+  background: #223323;
+}
+.site-live-map > svg {
+  width: 100%;
+  display: block;
+}
+.map-source-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #0b180ed9;
+  color: #c8d5bd;
+  padding: 9px 14px;
+  font-size: 11px;
+}
+.site-map-footnote {
+  display: flex;
+  gap: 14px;
+  padding: 13px 16px;
+  font-size: 12px;
+  color: #a4b697;
+  line-height: 1.6;
+}
+.site-map-footnote a {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.site-rules {
+  padding: 24px;
+  background: #152319;
+  border: 1px solid #354b39;
+  border-radius: 10px;
+}
+.site-rules > label {
+  display: block;
+  font-size: 14px;
+  margin: 22px 0;
+  color: #a8bc9a;
+}
+.site-rules input {
+  margin-top: 8px;
+  font-size: 14px;
+}
+.rule-state {
+  padding: 14px 0;
+  border-top: 1px solid #304634;
+}
+.rule-state span {
+  display: block;
+  font-size: 12px;
+  color: #8fa784;
+}
+.rule-state b {
+  display: block;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-top: 5px;
+}
+.rule-state.pending b {
+  color: #d6cfa4;
+}
+.site-rules > p {
+  font-size: 12px;
+  color: #a5b695;
+  line-height: 1.7;
+  margin: 18px 0;
+}
+.site-link-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #6e885a;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.site-rules > a:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  margin-top: 15px;
+}
+.terrain-profile {
+  padding: 26px;
+  margin: 24px 0;
+  background: #122018;
+  border: 1px solid #304835;
+  border-radius: 10px;
+}
+.terrain-profile-metrics {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: #92a788;
+  margin: 25px 0;
+}
+.terrain-profile-metrics b {
+  color: #d5e9bb;
+  font-size: 19px;
+  font-weight: 400;
+  display: block;
+  margin-top: 7px;
+}
+.terrain-profile > svg {
+  display: block;
+  width: 100%;
+}
+.site-gis-handoff {
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+  background: #192a1b;
+  border: 1px solid #41543a;
+  border-radius: 10px;
+  padding: 27px;
+  margin: 26px 0;
+}
+.site-gis-handoff h3 {
+  font-size: 23px;
+  font-weight: 500;
+  margin: 7px 0 12px;
+}
+.site-gis-handoff p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #a8bc9c;
+  max-width: 570px;
+}
+.site-gis-handoff a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  margin: 15px 22px 0 0;
+}
+.gis-downloads {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 215px;
+}
+.google-connect {
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 32px;
+  text-align: center;
+  background: #1a2b1b;
+}
+.google-connect h3 {
+  font-size: 22px;
+  font-weight: 500;
+  margin: 15px 0;
+}
+.google-connect p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #a7ba99;
+  max-width: 460px;
+  margin-bottom: 25px;
+}
+.site-map-card iframe {
+  width: 100%;
+  height: 500px;
+  border: 0;
+}
+.site-evidence {
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  background: #1b2c1e;
+  border: 1px solid #4b603d;
+  margin: 22px 0;
+  border-radius: 10px;
+}
+.site-evidence h3 {
+  margin: 8px 0;
+}
+.site-evidence p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #b0c1a5;
+}
+.site-evidence a {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  font-size: 13px;
+}
+.map-load-error {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 20px;
+  background: #342e1a;
+  padding: 18px;
+  font-size: 14px;
+  border-radius: 8px;
+}
+@media (max-width: 1150px) {
+  .site-map-layout {
+    grid-template-columns: 1fr;
+  }
+  .site-rules {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 25px;
+  }
+  .site-rules > .section-label,
+  .site-rules > label,
+  .site-rules > p {
+    grid-column: 1/-1;
+  }
+  .site-kpis {
+    gap: 12px;
+  }
+  .site-kpis > div {
+    padding: 17px;
+  }
+  .site-kpis strong {
+    font-size: 24px;
+  }
+}
+@media (max-width: 760px) {
+  .site-kpis,
+  .parcel-candidate-grid {
+    grid-template-columns: 1fr;
+  }
+  .site-result-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .site-kpis {
+    gap: 10px;
+  }
+  .site-map-toolbar {
+    padding: 10px;
+  }
+  .site-map-toolbar [data-slot='tabs-trigger'] {
+    font-size: 12px;
+  }
+  .site-map-toolbar label {
+    font-size: 12px;
+  }
+  .site-gis-handoff {
+    flex-direction: column;
+    padding: 20px;
+  }
+  .terrain-profile {
+    padding: 18px;
+  }
+  .terrain-profile-metrics {
+    gap: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .site-rules {
+    display: block;
+    padding: 22px;
+  }
+  .site-rules > .section-label {
+    margin-bottom: 20px;
+  }
+  .site-evidence {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .site-map-footnote {
+    flex-direction: column;
+  }
+  .site-search-helper {
+    gap: 12px;
+  }
+  .site-search-helper a {
+    margin-left: 0;
+  }
+  .parcel-candidate-grid button {
+    gap: 12px;
+  }
+}
+@media print {
+  .site-evidence {
+    background: white;
+    break-inside: avoid;
+  }
+  .site-evidence * {
+    color: #183022 !important;
+  }
+  .site-address-form,
+  .site-search-helper,
+  .site-result-heading button,
+  .site-gis-handoff,
+  .site-map-toolbar,
+  .site-matches,
+  .parcel-candidates {
+    display: none !important;
+  }
+  .site-check {
+    padding: 0;
+  }
+  .site-map-layout {
+    display: block;
+  }
+  .site-live-map {
+    print-color-adjust: exact;
+  }
+  .site-rules,
+  .site-kpis > div,
+  .terrain-profile,
+  .site-boundary-note {
+    background: white;
+    color: #172a17;
+    break-inside: avoid;
+  }
+  .site-kpis strong,
+  .site-kpis span,
+  .site-rules b,
+  .site-rules p {
+    color: #172a17 !important;
+  }
+}
+.site-live-map.contours {
+  background: #dae4d0;
+}
+.site-live-map.contours > svg {
+  background: #dae4d0;
+}
+.gis-downloads > a {
+  margin: 0;
+  color: #c8dcaf;
+}

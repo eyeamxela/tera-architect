@@ -1,3 +1,4 @@
+import type { SiteAssessment } from './site-data';
 import { defaultPlanning, type Planning } from './plan-model.ts';
 export type Point = [number, number];
 export type Feature = {
@@ -141,6 +142,7 @@ export type ScopeRow = {
   total: number;
 };
 export type SharedScope = {
+  site?: SiteAssessment;
   planning: Planning;
   revision: number;
   rows: ScopeRow[];
@@ -153,6 +155,7 @@ export type SharedScope = {
   total: number;
 };
 export type Job = {
+  site?: SiteAssessment;
   planning: Planning;
   features: Feature[];
   scale: number;

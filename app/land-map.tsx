@@ -16,6 +16,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Feature, Point, plantingPoints } from './data';
 type Props = {
+  parcelRings?: Point[][];
+  imageLabel?: string;
   features: Feature[];
   selected: string;
   onSelect: (id: string) => void;
@@ -32,6 +34,8 @@ type Props = {
 };
 export default function LandMap({
   features,
+  parcelRings,
+  imageLabel,
   selected,
   onSelect,
   boundary,
@@ -93,6 +97,17 @@ export default function LandMap({
             preserveAspectRatio="none"
             className="aerial-photo"
           />
+          {boundary && parcelRings && (
+            <path
+              d={parcelRings
+                .map((r) => 'M ' + r.map((p) => p.join(',')).join(' L ') + ' Z')
+                .join(' ')}
+              fill="none"
+              stroke="#d8f4ad"
+              strokeWidth="2"
+              strokeDasharray="9 7"
+            />
+          )}
           {boundary && image === '/property-aerial.png' && (
             <polygon
               points="170,85 950,65 1040,590 390,735 175,590"
@@ -181,7 +196,7 @@ export default function LandMap({
                       />
                     ))}
                 <g
-                  transform={`translate(${tree ? 640 : path ? 173 : f.kind === 'area' ? f.points[0][0] : 342} ${tree ? 304 : path ? 475 : f.kind === 'area' ? f.points[0][1] - 25 : 473})`}
+                  transform={`translate(${Math.max(15, Math.min(990, Math.min(...f.points.map((p) => p[0]))))} ${Math.max(35, Math.min(imageHeight - 30, Math.min(...f.points.map((p) => p[1])) - 15))})`}
                 >
                   <rect
                     x="0"
@@ -298,9 +313,10 @@ export default function LandMap({
       )}
       <div className="map-bottom">
         <span>
-          {image.startsWith('blob:') || image.startsWith('data:')
-            ? 'Your image · Session only'
-            : 'Illustrative aerial · Sample geometry'}
+          {imageLabel ||
+            (image.startsWith('blob:') || image.startsWith('data:')
+              ? 'Your image · Session only'
+              : 'Illustrative aerial · Sample geometry')}
         </span>
         <span className="scale-bar">
           {scale ? `${Math.round(100 * scale)} ft / 100 px` : 'Scale required'}

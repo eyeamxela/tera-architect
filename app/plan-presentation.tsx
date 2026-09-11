@@ -1,5 +1,6 @@
 'use client';
 import { useRef } from 'react';
+import { pixelPoint, type SiteAssessment } from './site-data';
 import { Download, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -112,6 +113,7 @@ export function InvestmentChart({ plan }: { plan: PlanResult }) {
 
 export function ConceptDrawing({
   features,
+  site,
   scale,
   spacing,
   imageHeight,
@@ -119,6 +121,7 @@ export function ConceptDrawing({
   revision,
   plan,
 }: {
+  site?: SiteAssessment;
   features: Feature[];
   scale: number;
   spacing: number;
@@ -207,6 +210,24 @@ export function ConceptDrawing({
               Planning estimates · Not for construction
             </text>
             <g transform="translate(40 130)">
+              {site && (
+                <path
+                  d={site.parcel.rings
+                    .map(
+                      (r) =>
+                        'M ' +
+                        r
+                          .map((p) => pixelPoint(p, site.bounds).join(','))
+                          .join(' L ') +
+                        ' Z',
+                    )
+                    .join(' ')}
+                  fill="none"
+                  stroke="#668981"
+                  strokeDasharray="8 6"
+                  strokeWidth="2"
+                />
+              )}
               {features
                 .filter((f) => f.included)
                 .map((f) => {
@@ -353,7 +374,9 @@ export function ConceptDrawing({
               grades, utilities, and site conditions require field verification.
             </text>
             <text x="52" y={height - 50} fontSize="13">
-              Fictional demo property. No surveyed boundary, elevations,
+              {site
+                ? 'County GIS parcel. No surveyed boundary, elevations,'
+                : 'Fictional demo property. No surveyed boundary, elevations,'}
               engineering details, or excavation depths are represented.
             </text>
           </g>
@@ -457,6 +480,7 @@ export function ClientInvestment({
         spacing={shared.spacing}
         imageHeight={shared.imageHeight}
         revision={shared.revision}
+        site={shared.site}
         plan={plan}
       />
     </div>

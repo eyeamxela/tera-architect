@@ -382,10 +382,14 @@ export default function PlanningView({
         spacing={job.spacing}
         imageHeight={job.imageHeight}
         revision={job.revision}
+        site={job.site}
         plan={plan}
       />
       <p className="planning-note">
-        Concept planning for {project.name} · fictional demonstration property.
+        Concept planning for {project.name} ·{' '}
+        {job.site
+          ? 'Sourced county parcel; legal buildable area unverified.'
+          : 'Fictional demonstration property.'}
         Tax, permits, excavation, irrigation, ongoing pond/path maintenance,
         inflation, and replacements are excluded unless added to the scope.
       </p>

@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import { calculatePlan } from './plan-model';
 import { ClientInvestment } from './plan-presentation';
+import { SiteEvidence } from './site-check';
+import { pixelPoint } from './site-data';
 import {
   ArrowDownToLine,
   ArrowRight,
@@ -595,6 +597,18 @@ export function ClientView({
                 imageHeight={shared.imageHeight}
                 interactive={false}
                 revision={shared.revision}
+                parcelRings={
+                  shared.site && shared.image === shared.site.hillshadeUrl
+                    ? shared.site.parcel.rings.map((r) =>
+                        r.map((p) => pixelPoint(p, shared.site!.bounds)),
+                      )
+                    : undefined
+                }
+                imageLabel={
+                  shared.site
+                    ? 'USGS terrain · County parcel · Planning scale'
+                    : undefined
+                }
               />
               <div className="client-map-legend">
                 <span>
@@ -670,6 +684,7 @@ export function ClientView({
               </Button>
             </aside>
           </div>
+          {shared.site && <SiteEvidence site={shared.site} />}
           <ClientInvestment shared={shared} project={project} />
           <div className="client-bottom-grid">
             <div className="conversation">

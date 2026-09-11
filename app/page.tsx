@@ -45,6 +45,8 @@ import {
 } from '@/components/ui/select';
 import LandMap from './land-map';
 import PlanningView from './planning-view';
+import SiteCheck from './site-check';
+import { feetPerPixel, pixelPoint, type SiteAssessment } from './site-data';
 import { calculatePlan } from './plan-model';
 import { ProjectList, ScopeView, ClientView } from './views';
 import {
@@ -80,7 +82,7 @@ function FeatureIcon({ kind, size = 17 }: { kind: string; size?: number }) {
 }
 
 export default function Home() {
-  const [view, setView] = useState('planning');
+  const [view, setView] = useState('site');
   const [projects, setProjects] = useState(sampleProjects);
   const [projectId, setProjectId] = useState('NC-024');
   const [jobs, setJobs] = useState<Record<string, Job>>(() =>
@@ -139,6 +141,43 @@ export default function Home() {
     setSelected(jobs[id]?.features[0]?.id || '');
     setView('planning');
   };
+  const startSiteProject = (site: SiteAssessment) => {
+    const id = 'VC-' + site.parcel.apn;
+    if (!jobs[id]) {
+      setProjects((all) => [
+        ...all,
+        {
+          id,
+          name: site.parcel.situs || 'Parcel ' + site.parcel.apn,
+          client: 'Client to be assigned',
+          location: site.jurisdiction,
+          acres: site.parcel.acres || 0,
+          stage: 'Planning',
+          initials: 'VC',
+        },
+      ]);
+      setJobs((all) => ({
+        ...all,
+        [id]: {
+          ...makeJob(true),
+          site: structuredClone(site),
+          image: site.hillshadeUrl,
+          imageHeight: 800,
+          scale: feetPerPixel(site.bounds),
+          revision: 1,
+          activity: [
+            'County parcel and USGS terrain imported; legal buildable area remains unverified.',
+          ],
+        },
+      }));
+    }
+    setProjectId(id);
+    setSelected('');
+    setView('workspace');
+    notify(
+      'Property opened with a sourced terrain base. Draw proposed work areas to build the scope.',
+    );
+  };
   const approve = () => {
     patchJob((j) =>
       j.shared
@@ -174,6 +213,7 @@ export default function Home() {
     patchJob((j) => ({
       ...j,
       shared: {
+        site: j.site ? structuredClone(j.site) : undefined,
         planning: { ...j.planning },
         revision: j.revision,
         features: structuredClone(j.features),
@@ -247,7 +287,7 @@ export default function Home() {
         name: 'get_land_workspace',
         title: 'Read land workspace',
         description:
-          'Read the current demo property, scope revision, measurements, and client review status. No external systems are connected.',
+          'Read the current demo property, scope revision, measurements, and client review status. Imported GIS records carry source attribution; pricing is sample data.',
         inputSchema: {
           type: 'object',
           properties: {},
@@ -441,6 +481,9 @@ export default function Home() {
             <TabsTrigger value="projects">
               <Users size={16} /> Projects
             </TabsTrigger>
+            <TabsTrigger value="site">
+              <MapPin size={16} /> Site check
+            </TabsTrigger>
             <TabsTrigger value="planning">
               <Sprout size={16} /> Plan & investment
             </TabsTrigger>
@@ -455,7 +498,11 @@ export default function Home() {
               <ArrowUpRight size={16} /> Client portal
             </TabsTrigger>
           </TabsList>
-          <span className="nav-meta">SAMPLE DATA · SESSION ONLY</span>
+          <span className="nav-meta">
+            {view === 'site' || job.site
+              ? 'PUBLIC GIS · SESSION ONLY'
+              : 'SAMPLE DATA · SESSION ONLY'}
+          </span>
         </div>
         <TabsContent value="projects" className="tab-panel">
           <ProjectList
@@ -465,7 +512,7 @@ export default function Home() {
             onNew={() => setDialog('new')}
           />
         </TabsContent>
-        {view !== 'projects' && view !== 'client' && (
+        {view !== 'projects' && view !== 'client' && view !== 'site' && (
           <div className="project-heading">
             <div>
               <div className="breadcrumb">
@@ -527,6 +574,9 @@ export default function Home() {
             </div>
           </div>
         )}
+        <TabsContent value="site" className="tab-panel">
+          <SiteCheck savedSite={job.site} onStart={startSiteProject} />
+        </TabsContent>
         <TabsContent value="planning" className="tab-panel">
           <PlanningView
             job={job}
@@ -595,7 +645,10 @@ export default function Home() {
                   checked={boundary}
                   onCheckedChange={setBoundary}
                   aria-label="Property boundary"
-                  disabled={job.image !== '/property-aerial.png'}
+                  disabled={
+                    job.image !== '/property-aerial.png' &&
+                    !(job.site && job.image === job.site.hillshadeUrl)
+                  }
                 />
               </label>
               <label className="layer-row">
@@ -657,6 +710,7 @@ export default function Home() {
                       patchJob(
                         (j) => ({
                           ...j,
+                          site: undefined,
                           image: url,
                           imageHeight: (1200 * image.height) / image.width,
                           features: [],
@@ -697,6 +751,18 @@ export default function Home() {
               image={job.image}
               imageHeight={job.imageHeight}
               revision={job.revision}
+              parcelRings={
+                job.site && job.image === job.site.hillshadeUrl
+                  ? job.site.parcel.rings.map((r) =>
+                      r.map((p) => pixelPoint(p, job.site!.bounds)),
+                    )
+                  : undefined
+              }
+              imageLabel={
+                job.site && job.image === job.site.hillshadeUrl
+                  ? 'USGS terrain · County parcel · Planning scale'
+                  : undefined
+              }
               onMeasure={scaleModal}
               onDraw={(points) => {
                 if (!validPolygon(points)) {
@@ -883,10 +949,13 @@ export default function Home() {
                   <Map size={28} />
                   <h2>Start with the land</h2>
                   <p>
-                    Set a known distance, then draw a pond or planting area on
-                    the map.
+                    {job.site
+                      ? 'The terrain base has a geographic planning scale. Use Draw area to mark proposed work; confirm measurements on site.'
+                      : 'Set a known distance, then draw a pond or planting area on the map.'}
                   </p>
-                  <Button onClick={scaleModal}>Set image scale</Button>
+                  <Button onClick={scaleModal}>
+                    {job.site ? 'Review image scale' : 'Set image scale'}
+                  </Button>
                 </div>
               )}
             </aside>
@@ -926,7 +995,7 @@ export default function Home() {
             : project.name.toUpperCase() + ' · ' + project.id}
         </span>
         <span>Planning → Scope → Client review → Fieldwork</span>
-        <span>DEMO · NO LIVE CONNECTIONS</span>
+        <span>PUBLIC GIS · DEMO PRICING</span>
       </footer>
       <Dialog
         open={dialog !== null}
