@@ -1,6 +1,10 @@
 'use client';
 import { useState } from 'react';
-import { InvestmentChart, ConceptDrawing } from './plan-presentation';
+import {
+  InvestmentChart,
+  ConceptDrawing,
+  ClientInvestment,
+} from './plan-presentation';
 import { ArrowUpRight, Sprout, Waves, Route, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,10 +35,96 @@ export default function PlanningView({
 }) {
   const [year, setYear] = useState(5);
   const p = job.planning;
-  const rows = scopeRows(job.features, job.scale, job.spacing);
+  const rows = scopeRows(job.features, job.scale, job.spacing, job.items);
   const plan = calculatePlan(rows, job.features, p);
   const outcome = plan.atYear(year);
   const update = (patch: Partial<Planning>) => onChange({ ...p, ...patch });
+  if (project.template === 'general')
+    return (
+      <section className="planning-view">
+        <div className="planning-title">
+          <div>
+            <span className="eyebrow">PROJECT PLANNING</span>
+            <h2>A clear path from scope to delivery.</h2>
+            <p>
+              Adjust the budget and schedule to see which work packages fit.
+            </p>
+          </div>
+          <Button onClick={onShare} disabled={!rows.length}>
+            Review & share
+          </Button>
+        </div>
+        <div className="build-planning-inputs">
+          <label>
+            Installation budget (USD)
+            <Input
+              type="number"
+              min="0"
+              max="10000000"
+              value={p.budget}
+              onChange={(e) =>
+                update({
+                  budget: Math.max(
+                    0,
+                    Math.min(10000000, Number(e.target.value)),
+                  ),
+                })
+              }
+            />
+          </label>
+          <label>
+            Delivery window (months)
+            <Input
+              type="number"
+              min="1"
+              max="60"
+              value={p.months}
+              onChange={(e) =>
+                update({
+                  months: Math.max(1, Math.min(60, Number(e.target.value))),
+                })
+              }
+            />
+          </label>
+          <label>
+            Contingency (%)
+            <Input
+              type="number"
+              min="0"
+              max="100"
+              value={p.contingency}
+              onChange={(e) =>
+                update({
+                  contingency: Math.max(
+                    0,
+                    Math.min(100, Number(e.target.value)),
+                  ),
+                })
+              }
+            />
+          </label>
+        </div>
+        {rows.length ? (
+          <ClientInvestment
+            project={project}
+            shared={{
+              ...job,
+              rows,
+              total: rows.reduce((s, r) => s + r.total, 0),
+              status: 'Awaiting review',
+            }}
+          />
+        ) : (
+          <div className="empty-state">
+            <h2>Start with the scope.</h2>
+            <p>
+              Add work packages with quantities and rates to compare a plan.
+            </p>
+            <Button onClick={onMap}>Add work packages</Button>
+          </div>
+        )}
+      </section>
+    );
   if (!rows.length)
     return (
       <section className="planning-view">
@@ -53,7 +143,7 @@ export default function PlanningView({
     <section className="planning-view">
       <div className="planning-title">
         <div>
-          <span className="eyebrow">CONNOR’S PLANNING DESK</span>
+          <span className="eyebrow">PROJECT PLANNING</span>
           <h2>A plan that grows with the property.</h2>
           <p>
             Compare the investment, sequence the work, and see what’s in place
@@ -258,8 +348,8 @@ export default function PlanningView({
             <p className="planning-note">
               Whole work areas are funded in priority order. Later phases stay
               deferred when the next phase exceeds the budget. Timing is evenly
-              spaced across the chosen window; Connor confirms dependencies and
-              field dates.
+              spaced across the chosen window; the project team confirms
+              dependencies and field dates.
             </p>
           </div>
           <div className="planning-panel">

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Compass,
   Plus,
@@ -54,6 +54,14 @@ export default function LandMap({
   const [zoom, setZoom] = useState(1);
   const [drawing, setDrawing] = useState(false);
   const [vertices, setVertices] = useState<Point[]>([]);
+  const [smallScreen, setSmallScreen] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 760px)');
+    const update = () => setSmallScreen(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
   const choose = (id: string) => {
     if (!drawing) onSelect(id);
   };
@@ -70,7 +78,7 @@ export default function LandMap({
       <svg
         viewBox={`0 0 1200 ${imageHeight}`}
         preserveAspectRatio={
-          fit === 'contain' ? 'xMidYMid meet' : 'xMidYMid slice'
+          fit === 'contain' || smallScreen ? 'xMidYMid meet' : 'xMidYMid slice'
         }
         className="aerial-canvas"
         aria-label="Interactive property plan"
@@ -312,7 +320,7 @@ export default function LandMap({
       )}
       {drawing && (
         <div className="map-drawing-tip">
-          <MousePointer2 size={14} /> Click the corners of your work area
+          <MousePointer2 size={14} /> Tap or click the corners of your work area
         </div>
       )}
       <div className="map-bottom">

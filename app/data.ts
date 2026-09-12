@@ -12,6 +12,7 @@ export type Feature = {
   included: boolean;
 };
 export type Project = {
+  template?: 'landscape' | 'general';
   id: string;
   name: string;
   client: string;
@@ -141,7 +142,10 @@ export type ScopeRow = {
   rate: number;
   total: number;
 };
+export type ManualScopeItem = Omit<ScopeRow, 'total'> & { included: boolean };
 export type SharedScope = {
+  attachments?: string[];
+  documents?: { id: string; name: string; mime: string; url: string }[];
   site?: SiteAssessment;
   planning: Planning;
   revision: number;
@@ -155,6 +159,9 @@ export type SharedScope = {
   total: number;
 };
 export type Job = {
+  clientActivity?: string[];
+  attachments?: string[];
+  items?: ManualScopeItem[];
   site?: SiteAssessment;
   planning: Planning;
   features: Feature[];
@@ -171,29 +178,43 @@ export function scopeRows(
   features: Feature[],
   scale: number,
   spacing: number,
+  items: ManualScopeItem[] = [],
 ): ScopeRow[] {
-  if (!scale || !Number.isFinite(scale) || scale < 0) return [];
-  return features
-    .filter((f) => f.included)
-    .map((f) => {
-      const m = metrics(f.points, scale, f.kind !== 'path');
-      const quantity =
-        f.kind === 'trees'
-          ? plantingPoints(f.points, scale, spacing).length
-          : f.kind === 'area'
-            ? Math.round(m.area)
-            : Math.round(m.perimeter);
-      return {
-        id: f.id,
-        name: f.name,
-        description: f.description,
-        quantity,
-        unit:
-          f.kind === 'trees' ? 'trees' : f.kind === 'area' ? 'sq ft' : 'lin ft',
-        rate: f.rate,
-        total: quantity * f.rate,
-      };
-    });
+  const manual = items
+    .filter((item) => item.included)
+    .map(({ included: _, ...item }) => ({
+      ...item,
+      total: Math.round(item.quantity * Math.round(item.rate * 100)) / 100,
+    }));
+  if (!scale || !Number.isFinite(scale) || scale < 0) return manual;
+  return [
+    ...features
+      .filter((f) => f.included)
+      .map((f) => {
+        const m = metrics(f.points, scale, f.kind !== 'path');
+        const quantity =
+          f.kind === 'trees'
+            ? plantingPoints(f.points, scale, spacing).length
+            : f.kind === 'area'
+              ? Math.round(m.area)
+              : Math.round(m.perimeter);
+        return {
+          id: f.id,
+          name: f.name,
+          description: f.description,
+          quantity,
+          unit:
+            f.kind === 'trees'
+              ? 'trees'
+              : f.kind === 'area'
+                ? 'sq ft'
+                : 'lin ft',
+          rate: f.rate,
+          total: Math.round(quantity * Math.round(f.rate * 100)) / 100,
+        };
+      }),
+    ...manual,
+  ];
 }
 export function makeJob(empty = false): Job {
   const features = empty ? [] : structuredClone(initialFeatures);

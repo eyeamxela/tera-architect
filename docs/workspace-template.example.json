@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "status": "proposed-example-not-runtime-config",
+  "business": {
+    "displayName": "Example Studio",
+    "preparedBy": "Project team",
+    "descriptor": "Projects & clients",
+    "logoFileId": null
+  },
+  "locale": "en-US",
+  "currency": "USD",
+  "timezone": "America/Los_Angeles",
+  "measurementSystem": "imperial",
+  "defaultTemplate": { "id": "general", "version": 1 },
+  "templates": [
+    {
+      "id": "general",
+      "version": 1,
+      "label": "General project",
+      "optionalModules": ["concept-gallery"],
+      "labels": { "place": "Project location", "workPackage": "Work package", "delivery": "Delivery" },
+      "allowedUnits": ["package", "hour", "day", "item", "sq ft"],
+      "proposalSections": ["overview", "visuals", "scope", "schedule", "budget", "assumptions", "review"],
+      "defaultPackageKeys": ["discovery", "design", "delivery"]
+    },
+    {
+      "id": "landscape",
+      "version": 1,
+      "label": "Landscape",
+      "optionalModules": ["site-plan", "terrain", "planting", "concept-gallery", "care-projection"],
+      "labels": { "place": "Property", "workPackage": "Work area", "delivery": "Installation" },
+      "allowedUnits": ["package", "hour", "tree", "lin ft", "sq ft", "acre"],
+      "proposalSections": ["overview", "site-plan", "visuals", "scope", "schedule", "budget", "care", "assumptions", "review"],
+      "defaultPackageKeys": ["site-assessment", "planting", "establishment-care"]
+    }
+  ],
+  "catalogExample": {
+    "key": "discovery",
+    "version": 1,
+    "name": "Discovery & scope",
+    "unit": "package",
+    "rateMinor": null,
+    "rateStatus": "needs-pricing",
+    "inclusions": ["Initial consultation", "Written project brief"],
+    "exclusions": ["Work not described in the approved scope"],
+    "durationDays": null
+  },
+  "automationPolicy": {
+    "internalCapture": "apply-with-permission-check",
+    "scopeEdits": "draft-only",
+    "publication": "explicit-owner-action",
+    "clientResponse": "verified-client-and-revision"
+  }
+}

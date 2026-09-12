@@ -1,5 +1,8 @@
 'use client';
 import { useState } from 'react';
+import ManualScopeItems from './manual-scope-items';
+import type { ManualScopeItem } from './data';
+import { useBrand } from './brand';
 import {
   ArrowDownToLine,
   ArrowRight,
@@ -64,7 +67,7 @@ export function ProjectList({
         <div>
           <div className="eyebrow">YOUR PRACTICE, IN VIEW</div>
           <h1>Clients & projects</h1>
-          <p>Every property. Every next step.</p>
+          <p>Every project. Every next step.</p>
         </div>
         <Button className="primary-action" onClick={onNew}>
           <Plus size={16} /> New project
@@ -95,7 +98,7 @@ export function ProjectList({
               Object.values(jobs).reduce(
                 (s, j) =>
                   s +
-                  scopeRows(j.features, j.scale, j.spacing).reduce(
+                  scopeRows(j.features, j.scale, j.spacing, j.items).reduce(
                     (a, r) => a + r.total,
                     0,
                   ),
@@ -136,10 +139,10 @@ export function ProjectList({
         <span>{filtered.length} projects</span>
       </div>
       <div className="project-table">
-        <Table>
+        <Table className="desktop-project-table">
           <TableHeader>
             <TableRow>
-              <TableHead>PROPERTY / CLIENT</TableHead>
+              <TableHead>PROJECT / CLIENT</TableHead>
               <TableHead>LOCATION</TableHead>
               <TableHead>STAGE</TableHead>
               <TableHead>SCOPE VALUE</TableHead>
@@ -165,7 +168,8 @@ export function ProjectList({
                   <span className="location-cell">
                     {p.location}
                     <small>
-                      {p.acres} acres · {p.id}
+                      {p.template !== 'general' ? `${p.acres} acres · ` : ''}
+                      {p.id}
                     </small>
                   </span>
                 </TableCell>
@@ -182,6 +186,7 @@ export function ProjectList({
                       jobs[p.id]?.features || [],
                       jobs[p.id]?.scale || 0,
                       jobs[p.id]?.spacing || 25,
+                      jobs[p.id]?.items || [],
                     ).reduce((s, r) => s + r.total, 0),
                   )}
                 </TableCell>
@@ -198,6 +203,49 @@ export function ProjectList({
             ))}
           </TableBody>
         </Table>
+        <div className="mobile-project-list">
+          {filtered.map((p) => (
+            <button
+              key={p.id}
+              className="mobile-project-card"
+              onClick={() => onOpen(p.id)}
+              aria-label={`Open ${p.name}`}
+            >
+              <span
+                className={`status ${p.stage === 'Fieldwork' ? 'mint' : 'amber'}`}
+              >
+                {p.stage}
+              </span>
+              <strong>{p.name}</strong>
+              <span className="mobile-project-client">{p.client}</span>
+              <span className="mobile-project-location">
+                <MapPin size={14} /> {p.location}
+              </span>
+              <span className="mobile-project-meta">
+                {p.template !== 'general' ? `${p.acres} acres · ` : ''}
+                {p.id}
+              </span>
+              <span className="mobile-project-bottom">
+                <span>
+                  <small>SCOPE VALUE</small>
+                  <b>
+                    {money(
+                      scopeRows(
+                        jobs[p.id]?.features || [],
+                        jobs[p.id]?.scale || 0,
+                        jobs[p.id]?.spacing || 25,
+                        jobs[p.id]?.items || [],
+                      ).reduce((sum, row) => sum + row.total, 0),
+                    )}
+                  </b>
+                </span>
+                <span className="mobile-project-open">
+                  Open project <ArrowUpRight size={18} />
+                </span>
+              </span>
+            </button>
+          ))}
+        </div>
         {!filtered.length && (
           <div className="empty-state">
             <Search />
@@ -217,7 +265,7 @@ export function ProjectList({
       </div>
       <div className="practice-note">
         <span>
-          <i /> SAMPLE PRACTICE
+          <i /> PROJECT WORKSPACE
         </span>
         <p>
           Explore a project, mark up the property, and prepare a scope for the
@@ -234,21 +282,24 @@ export function ScopeView({
   onUpdate,
   onShare,
   onMap,
+  onItemsChange,
 }: {
   job: Job;
   project: Project;
   onUpdate: (id: string, patch: Partial<Feature>) => void;
   onShare: () => void;
   onMap: () => void;
+  onItemsChange: (items: ManualScopeItem[]) => void;
 }) {
-  const rows = scopeRows(job.features, job.scale, job.spacing);
+  const brand = useBrand();
+  const rows = scopeRows(job.features, job.scale, job.spacing, job.items);
   const total = rows.reduce((s, r) => s + r.total, 0);
   const draft = job.shared?.revision !== job.revision;
   return (
     <section className="scope-layout">
       <div className="scope-document">
         <div className="document-masthead">
-          <span className="eyebrow">OJAI PERMACULTURE</span>
+          <span className="eyebrow">{brand.studio}</span>
           <span>
             PROPOSAL · {project.id} / {String(job.revision).padStart(2, '0')}
           </span>
@@ -267,11 +318,15 @@ export function ScopeView({
         <div className="document-context">
           <div>
             <span>PROJECT</span>
-            <b>Land restoration & planting</b>
+            <b>
+              {project.template === 'general'
+                ? 'Project scope'
+                : 'Landscape & land'}
+            </b>
           </div>
           <div>
             <span>PREPARED</span>
-            <b>September 11, 2026</b>
+            <b>Draft for review</b>
           </div>
           <div>
             <span>ESTIMATE BASIS</span>
@@ -282,11 +337,12 @@ export function ScopeView({
           <span>01</span> Proposed improvements
         </div>
         <p className="document-intro">
-          A coordinated plan to improve water edges, establish productive
-          planting, and make the property easier to access.
+          A coordinated scope with clear deliverables, quantities, and
+          allowances. Select the work to include in this proposal.
         </p>
+        <ManualScopeItems items={job.items || []} onChange={onItemsChange} />
         <div className="scope-items">
-          {!job.scale && (
+          {!!job.features.length && !job.scale && (
             <p className="scale-required-note">
               Set the image scale in the property workspace before calculating
               quantities.
@@ -367,12 +423,13 @@ export function ScopeView({
             );
           })}
         </div>
-        {!job.features.length && (
+        {!job.features.length && !job.items?.length && (
           <div className="empty-state">
             <FileText />
-            <h3>Your scope starts on the map</h3>
+            <h3>Define the first work package</h3>
             <p>
-              Draw a work area and confirm the scale to calculate quantities.
+              Add a work package above, or draw a work area to calculate
+              quantities from a plan.
             </p>
             <Button onClick={onMap}>Open property workspace</Button>
           </div>
@@ -382,27 +439,32 @@ export function ScopeView({
         </div>
         <ul className="assumptions">
           <li>
-            Measurements are preliminary plan estimates and require a site
-            check.
+            Confirm deliverables, quantities, rates, and exclusions before
+            publishing.
           </li>
           <li>
-            Pond depth, excavation volumes, permits, and soil conditions are not
-            included.
+            Taxes, permits, and work not explicitly described require separate
+            agreement.
           </li>
           <li>
-            Planting quantities use the selected spacing; final positions
-            require field confirmation.
+            Dates and costs are planning allowances until confirmed by the
+            project team.
           </li>
-          <li>
-            Rates are sample values for this UI demo. Tax and final scheduling
-            are not included.
-          </li>
+          {project.template === 'landscape' && (
+            <li>
+              Mapped dimensions and planting positions require field
+              verification. Pond volumes and legal development rights are not
+              established by this plan.
+            </li>
+          )}
         </ul>
         <div className="document-signoff">
           <span>
             Prepared with care.
             <br />
-            <b>Connor · Ojai Permaculture</b>
+            <b>
+              {brand.lead} · {brand.studio}
+            </b>
           </span>
           <span>
             {project.id} · REV {String(job.revision).padStart(2, '0')}
@@ -413,8 +475,8 @@ export function ScopeView({
         <div className="section-label">PROPOSAL SUMMARY</div>
         <div className="summary-value">
           <small>Full scope before contingency</small>
-          <strong>{job.scale ? money(total) : '—'}</strong>
-          <span>USD · sample rates</span>
+          <strong>{rows.length ? money(total) : '—'}</strong>
+          <span>USD · entered rates</span>
         </div>
         <div className="summary-lines">
           {rows.map((r) => (
@@ -434,7 +496,9 @@ export function ScopeView({
         </div>
         <Button
           className="primary-action wide"
-          disabled={!rows.length || !job.scale}
+          disabled={
+            !rows.length || (job.features.some((f) => f.included) && !job.scale)
+          }
           onClick={onShare}
         >
           <Send size={15} /> Review & share
@@ -447,8 +511,8 @@ export function ScopeView({
           <ArrowDownToLine size={15} /> Print / save PDF
         </Button>
         <small className="session-explainer">
-          Sharing updates the demo client portal for this session. Nothing is
-          sent externally.
+          Publishing creates a fixed proposal revision at your client link.
+          Draft changes remain private until you publish again.
         </small>
         <div className="detail-divider" />
         <div className="section-label">REVISION HISTORY</div>

@@ -13,7 +13,13 @@ import {
 } from './data';
 import { calculatePlan, type PlanResult } from './plan-model';
 
-export function InvestmentChart({ plan }: { plan: PlanResult }) {
+export function InvestmentChart({
+  plan,
+  landscape = true,
+}: {
+  plan: PlanResult;
+  landscape?: boolean;
+}) {
   const max = Math.max(1, ...plan.years.map((y) => y.total));
   const x = (year: number) => 55 + year * 138;
   const y = (value: number) => 174 - (value / max) * 138;
@@ -26,14 +32,18 @@ export function InvestmentChart({ plan }: { plan: PlanResult }) {
       <div className="chart-header">
         <h4>Cumulative year-end allowances</h4>
         <span>
-          <i /> Installation + reserve <i className="care-line" /> Including
-          care
+          <i /> Installation + reserve{' '}
+          {landscape && (
+            <>
+              <i className="care-line" /> Including care
+            </>
+          )}
         </span>
       </div>
       <svg
         viewBox="0 0 800 218"
         role="img"
-        aria-label={`Cumulative allowance at year five: ${money(plan.atYear(5).total)}, including ${money(plan.atYear(5).care)} for tree care.`}
+        aria-label={`Cumulative allowance at year five: ${money(plan.atYear(5).total)}, ${landscape ? `including ${money(plan.atYear(5).care)} for tree care.` : 'for the selected work packages.'}`}
       >
         {[0, 0.5, 1].map((t) => (
           <g key={t}>
@@ -198,10 +208,10 @@ export function ConceptDrawing({
           />
           <g fontFamily="Arial, sans-serif" fill="#1a4650">
             <text x="52" y="69" fontSize="22" fontWeight="bold">
-              OJAI PERMACULTURE
+              BUILD
             </text>
             <text x="52" y="98" fontSize="15">
-              {project.name} · Prepared by Connor
+              {project.name} · Prepared with TERA
             </text>
             <text x="1228" y="64" textAnchor="end" fontSize="17">
               CONCEPT PLAN / REV {revision}
@@ -395,6 +405,7 @@ export function ClientInvestment({
 }) {
   const plan = calculatePlan(shared.rows, shared.features, shared.planning);
   const fifth = plan.atYear(5);
+  const landscape = project.template !== 'general';
   return (
     <div className="client-investment">
       <div className="planning-panel-title">
@@ -417,10 +428,14 @@ export function ClientInvestment({
           </small>
         </div>
         <div>
-          <span>5-YEAR CARE ALLOWANCE</span>
-          <strong>{money(fifth.care)}</strong>
+          <span>
+            {landscape ? '5-YEAR CARE ALLOWANCE' : 'FUNDED WORK PACKAGES'}
+          </span>
+          <strong>{landscape ? money(fifth.care) : plan.funded.length}</strong>
           <small>
-            {money(shared.planning.carePerTree)} per tree / year after planting
+            {landscape
+              ? `${money(shared.planning.carePerTree)} per tree / year after planting`
+              : 'Delivered within your selected schedule'}
           </small>
         </div>
         <div>
@@ -431,22 +446,25 @@ export function ClientInvestment({
           </small>
         </div>
       </div>
-      <InvestmentChart plan={plan} />
+      <InvestmentChart plan={plan} landscape={landscape} />
       <div className="client-growth-years">
         {[1, 3, 5].map((year) => {
           const o = plan.atYear(year);
           return (
             <div key={year}>
               <span>YEAR {year}</span>
-              <h4>{o.complete.length} work areas delivered</h4>
+              <h4>{o.complete.length} work packages delivered</h4>
               <p>
-                {o.trees} trees planted · {o.pond.toLocaleString()} ft pond edge
-                · {o.path.toLocaleString()} ft access
+                {landscape
+                  ? `${o.trees} trees planted · ${o.pond.toLocaleString()} ft pond edge · ${o.path.toLocaleString()} ft access`
+                  : `${money(o.total)} cumulative allowance`}
               </p>
               <small>
-                {o.trees
-                  ? `${o.oldestTrees.toFixed(1)} years since earliest planting`
-                  : 'Planting not yet delivered'}
+                {!landscape
+                  ? 'Scope, rates, and timing subject to project review'
+                  : o.trees
+                    ? `${o.oldestTrees.toFixed(1)} years since earliest planting`
+                    : 'Planting not yet delivered'}
               </small>
             </div>
           );
@@ -468,21 +486,23 @@ export function ClientInvestment({
         </div>
       )}
       <p className="planning-note">
-        An illustrative schedule based on sample rates and quantities. Care
-        allowance covers trees only. No inflation, yield, or financial return is
-        modeled. Site conditions, species, season, and ongoing care affect
-        actual results.
+        An illustrative schedule based on your scope quantities and rates.
+        Confirm costs and timing before work begins.{' '}
+        {landscape ? 'Care allowance covers trees only. ' : ''}No inflation or
+        financial return is modeled.
       </p>
-      <ConceptDrawing
-        project={project}
-        features={shared.features}
-        scale={shared.scale}
-        spacing={shared.spacing}
-        imageHeight={shared.imageHeight}
-        revision={shared.revision}
-        site={shared.site}
-        plan={plan}
-      />
+      {landscape && (
+        <ConceptDrawing
+          project={project}
+          features={shared.features}
+          scale={shared.scale}
+          spacing={shared.spacing}
+          imageHeight={shared.imageHeight}
+          revision={shared.revision}
+          site={shared.site}
+          plan={plan}
+        />
+      )}
     </div>
   );
 }

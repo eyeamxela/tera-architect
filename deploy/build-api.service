@@ -1,0 +1,20 @@
+[Unit]
+Description=TERA project API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=build
+WorkingDirectory=/opt/build
+EnvironmentFile=/etc/build/api.env
+ExecStart=/usr/bin/node --experimental-strip-types server/main.ts
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/build
+
+[Install]
+WantedBy=multi-user.target

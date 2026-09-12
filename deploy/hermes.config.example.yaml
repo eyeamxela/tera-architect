@@ -1,0 +1,20 @@
+# Dedicated TERA profile. Do not use a personal Hermes profile or its credentials.
+# Pin and validate the installed Hermes release before enabling real jobs.
+platform_toolsets:
+  api_server: []
+agent:
+  disabled_toolsets: [all]
+  tool_use_enforcement: false
+mcp_servers: {}
+plugins:
+  enabled: []
+context:
+  engine: compressor
+gateway:
+  api_server:
+    enabled: true
+    host: 127.0.0.1
+    port: 8642
+    max_concurrent_runs: 1
+# API_SERVER_ENABLED=true and API_SERVER_KEY belong in this profile's environment.
+# Only the selected model provider credential belongs here. No CRM/bot/storage keys.
