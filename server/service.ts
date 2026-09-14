@@ -12,7 +12,6 @@ import {
   responseSchema,
 } from './contracts.ts';
 import {
-  makeJob,
   scopeRows,
   layoutFits,
   validPolygon,
@@ -20,6 +19,12 @@ import {
   type Project,
 } from '../app/data.ts';
 import { calculatePlan } from '../app/plan-model.ts';
+import {
+  designIssues,
+  designInvestment,
+  emptyArchitectDraft,
+  publicDesignScope,
+} from '../app/design-model.ts';
 import { PRODUCT_NAME } from '../app/product.ts';
 
 export type Actor = {
@@ -361,16 +366,11 @@ export class BuildService {
             p.template,
           ],
         );
-        const empty = makeJob(true);
-        const initial = p.draft || {
-          planning: empty.planning,
-          features: [],
-          items: [],
-          scale: 0,
-          spacing: 25,
-          image: p.template === 'landscape' ? empty.image : '',
-          imageHeight: 800,
-        };
+        const initial =
+          p.draft ||
+          emptyArchitectDraft(
+            p.template === 'landscape' ? 'land' : 'architecture',
+          );
         const draft = await this.validateDraft(tx, actor, id, initial);
         await tx.query(
           'INSERT INTO build_drafts(organization_id,project_id,content,updated_by) VALUES($1,$2,$3,$4)',
@@ -431,7 +431,10 @@ export class BuildService {
         );
         const content = await this.validateDraft(tx, actor, id, d.content);
         check(
-          !content.features.some((f) => f.included) || content.scale > 0,
+          (content.designScope &&
+            !content.designScope.enabled.includes('land')) ||
+            !content.features.some((f) => f.included) ||
+            content.scale > 0,
           400,
           'Calibrate mapped work before sharing.',
         );
@@ -440,6 +443,7 @@ export class BuildService {
           content.scale,
           content.spacing,
           content.items,
+          content.designScope,
         );
         check(rows.length, 400, 'Include at least one work package.');
         const total = rows.reduce(
@@ -451,7 +455,25 @@ export class BuildService {
           400,
           'The scope total is too large.',
         );
-        calculatePlan(rows, content.features, content.planning);
+        if (content.designScope) {
+          const issues = designIssues(content.designScope);
+          check(
+            !issues.length,
+            400,
+            issues[0] || 'Complete the discipline estimates.',
+          );
+          const estimate = designInvestment(
+            content.designScope,
+            rows,
+            content.planning.contingency,
+            content.planning.budget,
+          );
+          check(
+            Number.isSafeInteger(Math.round(estimate.total * 100)),
+            400,
+            'The investment total is too large.',
+          );
+        } else calculatePlan(rows, content.features, content.planning);
         const previous = await this.latest(tx, actor.organizationId, id);
         const number = (previous?.number || 0) + 1;
         const revisionId = randomUUID();
@@ -467,6 +489,14 @@ export class BuildService {
         );
         const shared = {
           ...content,
+          ...(content.designScope
+            ? {
+                designScope: publicDesignScope(content.designScope),
+                ...(!content.designScope.enabled.includes('land')
+                  ? { features: [], image: '', scale: 0, site: undefined }
+                  : {}),
+              }
+            : {}),
           rows,
           total: total / 100,
           revision: number,

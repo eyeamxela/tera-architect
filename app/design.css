@@ -1,0 +1,810 @@
+.tera-design {
+  max-width: 1280px;
+  margin: auto;
+  padding: 30px 36px 60px;
+  color: #333b32;
+}
+.tera-design-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  margin: 10px 0 30px;
+}
+.tera-design-header h2 {
+  font-family: Georgia, serif;
+  font-size: clamp(30px, 3.3vw, 46px);
+  font-weight: 400;
+  line-height: 1.15;
+  margin: 15px 0;
+}
+.tera-design-header h2 em {
+  font-weight: 400;
+  color: #78836b;
+}
+.tera-design p {
+  color: #74796f;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.tera-discipline-picker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.tera-discipline-picker button {
+  padding: 17px 13px;
+  border: 1px solid #dce0d5;
+  border-radius: 9px;
+  background: #fafaf7;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-align: left;
+  font-size: 13px;
+  color: #72796b;
+}
+.tera-discipline-picker button[aria-pressed='true'] {
+  background: #e9eee1;
+  border-color: #a3b28f;
+  color: #3e4b32;
+}
+.tera-discipline-picker button:disabled {
+  opacity: 1;
+  cursor: default;
+}
+.tera-discipline-picker button span {
+  border: 1px solid #b8c3ac;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.tera-note {
+  font-size: 12px !important;
+  color: #777d71 !important;
+  line-height: 1.6 !important;
+  margin: 12px 0 20px;
+}
+.tera-investment-summary {
+  margin-top: 25px;
+  border: 1px solid #dfe2d8;
+  border-radius: 12px;
+  background: #fcfcf8;
+  overflow: hidden;
+}
+.tera-stat-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  border-bottom: 1px solid #e2e5dc;
+}
+.tera-stat-grid > div {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-right: 1px solid #e2e5dc;
+}
+.tera-stat-grid > div:last-child {
+  border: 0;
+}
+.tera-stat-grid small {
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  color: #737d67;
+}
+.tera-stat-grid strong {
+  font-family: Georgia, serif;
+  font-size: 32px;
+  font-weight: 400;
+  color: #3c4736;
+}
+.tera-stat-grid span {
+  font-size: 11px;
+  color: #777d71;
+}
+.tera-investment-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  padding: 25px;
+}
+.tera-breakdown {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 15px;
+  font-size: 12px;
+}
+.tera-breakdown > div > div:first-child,
+.tera-breakdown > div:has(> b) {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.tera-meter {
+  height: 4px;
+  border-radius: 3px;
+  background: #e8ebe2;
+  margin-top: 7px;
+}
+.tera-meter i {
+  height: 100%;
+  background: #95a780;
+  border-radius: 3px;
+  display: block;
+}
+.tera-totals > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.tera-totals dt {
+  color: #737b6b;
+}
+.tera-totals dd {
+  margin: 0;
+}
+.tera-totals .tera-total {
+  border-top: 1px solid #dfe3d6;
+  padding-top: 13px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.tera-investment-summary > .tera-note {
+  padding: 0 25px;
+  margin-top: 0;
+}
+.tera-view-tabs {
+  display: flex;
+  gap: 24px;
+  margin: 35px 0 24px;
+  border-bottom: 1px solid #dce0d5;
+}
+.tera-view-tabs button {
+  border-bottom: 2px solid transparent;
+  padding: 14px 0;
+  font-size: 12px;
+  color: #777d71;
+}
+.tera-view-tabs button[aria-current='page'] {
+  border-color: #52683f;
+  color: #33432b;
+}
+.tera-workbench-grid {
+  display: grid;
+  grid-template-columns: 205px minmax(0, 1fr);
+  gap: 30px;
+}
+.tera-module-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-self: start;
+}
+.tera-module-nav > button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 7px;
+  color: #7b8272;
+  font-size: 12px;
+}
+.tera-module-nav > button[aria-current='page'] {
+  background: #e9eee1;
+  color: #35472c;
+}
+.tera-module-nav > small {
+  font-family: Georgia, serif;
+  font-style: italic;
+  color: #959b8b;
+  font-size: 19px;
+  line-height: 1.5;
+  padding: 24px 14px;
+}
+.tera-module-body,
+.tera-panel {
+  padding: 28px;
+  background: #fffefa;
+  border: 1px solid #e1e3d9;
+  border-radius: 12px;
+}
+.tera-panel {
+  margin: 0 0 25px;
+}
+.tera-panel-heading {
+  margin-bottom: 26px;
+}
+.tera-panel-heading h3,
+.tera-panel > h3 {
+  font-family: Georgia, serif;
+  font-size: 28px;
+  font-weight: 400;
+  margin: 9px 0;
+}
+.tera-panel-heading p {
+  margin: 8px 0;
+}
+.tera-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 19px;
+}
+.tera-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 12px;
+  color: #535e49;
+}
+.tera-field input,
+.tera-field select,
+.tera-field textarea {
+  border: 1px solid #dce0d3;
+  border-radius: 6px;
+  background: #fffefa;
+  padding: 10px 11px;
+  color: #333d2d;
+  font: inherit;
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+}
+.tera-field textarea {
+  resize: vertical;
+}
+.tera-field small {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #929885;
+}
+.tera-field input:focus,
+.tera-field select:focus,
+.tera-field textarea:focus {
+  outline: 2px solid #a2b28b;
+  outline-offset: 2px;
+}
+.tera-wide {
+  grid-column: 1/-1;
+}
+.tera-section-divider {
+  border-top: 1px solid #e1e5d8;
+  margin-top: 28px;
+  padding-top: 25px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+}
+.tera-section-divider h4,
+.tera-module-body > h4 {
+  font-weight: 500;
+  font-size: 16px;
+  margin: 0;
+}
+.tera-section-divider p {
+  font-size: 12px;
+  max-width: 340px;
+}
+.tera-entry {
+  background: #f7f8f1;
+  border: 1px solid #e1e4d7;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.tera-entry summary {
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+.tera-entry .tera-fields {
+  margin-bottom: 15px;
+}
+.tera-empty {
+  border: 1px dashed #d8dfca;
+  padding: 22px;
+  border-radius: 9px;
+  text-align: center;
+  color: #a4ad97;
+}
+.tera-empty svg {
+  margin: auto;
+}
+.tera-exclusions {
+  margin-top: 25px;
+}
+.tera-cost {
+  border: 1px solid #dfe4d3;
+  border-radius: 9px;
+  padding: 18px;
+  margin-bottom: 14px;
+  background: #fcfcf7;
+}
+.tera-cost.tera-excluded {
+  background: #f4f4ef;
+}
+.tera-excluded .tera-field {
+  opacity: 0.6;
+}
+.tera-cost-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  font-size: 12px;
+}
+.tera-cost-heading > label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.tera-cost-heading > strong {
+  margin-left: auto;
+  font-weight: 500;
+  font-size: 17px;
+}
+.tera-cost-heading > button {
+  padding: 6px;
+}
+.tera-cost-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.tera-cost-footer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: end;
+  margin-top: 12px;
+}
+.tera-check {
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding-bottom: 13px;
+}
+.tera-dependencies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding: 20px 0;
+  border-bottom: 1px solid #e2e5d8;
+  margin: 20px 0;
+}
+.tera-dependencies legend {
+  font-size: 12px;
+  color: #7a846c;
+}
+.tera-dependencies label {
+  font-size: 12px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.tera-stage {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1fr;
+  gap: 15px;
+  padding: 18px 0;
+  border-bottom: 1px solid #e4e7dc;
+  align-items: center;
+}
+.tera-stage > label:first-child {
+  font-size: 12px;
+  display: flex;
+  gap: 8px;
+}
+.tera-stage input[type='checkbox'] {
+  flex-shrink: 0;
+}
+.tera-timeline-row {
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  gap: 25px;
+  align-items: center;
+  margin: 22px 0;
+}
+.tera-timeline-row > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+.tera-timeline-row span {
+  font-size: 11px;
+  color: #858b7b;
+}
+.tera-track {
+  height: 17px;
+  background: #edf0e6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.tera-track i {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: #9fae8c;
+}
+.tera-readiness {
+  background: #f4efe3;
+  color: #756849;
+  padding: 17px 20px;
+  border-radius: 8px;
+  margin-top: 24px;
+  font-size: 12px;
+}
+.tera-readiness summary {
+  cursor: pointer;
+}
+.tera-readiness ul {
+  list-style: disc;
+  padding-left: 20px;
+  margin-top: 15px;
+  line-height: 1.9;
+}
+.tera-design-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-top: 28px;
+}
+.tera-design-footer span {
+  font-size: 11px;
+  color: #8e9582;
+}
+.tera-client-content {
+  padding: 28px 48px 45px;
+}
+.tera-client-disciplines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0;
+}
+.tera-client-disciplines span {
+  background: #eaf0df;
+  padding: 8px 12px;
+  border-radius: 30px;
+  font-size: 11px;
+  color: #546544;
+}
+.tera-client-section {
+  border-top: 1px solid #dfe3d6;
+  padding: 32px 0;
+}
+.tera-client-section h2 {
+  font-family: Georgia, serif;
+  font-size: 31px;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+.tera-client-section h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 25px 0 15px;
+}
+.tera-client-section dl.tera-specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  font-size: 12px;
+}
+.tera-specs dt {
+  color: #828b76;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+.tera-specs dd {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+  margin: 0;
+}
+.tera-client-entry {
+  padding: 20px;
+  margin: 15px 0;
+  border: 1px solid #e0e5d6;
+  border-radius: 8px;
+}
+.tera-client-entry h4 {
+  margin-bottom: 18px;
+  font-size: 14px;
+}
+.tera-client-cost {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 15px 0;
+  border-bottom: 1px solid #e5e8df;
+  font-size: 13px;
+}
+.tera-client-cost small {
+  display: block;
+  font-size: 11px;
+  color: #8a927f;
+  margin-top: 5px;
+}
+.tera-client-cost strong {
+  white-space: nowrap;
+}
+.tera-client-stage {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 10px 0;
+  font-size: 12px;
+}
+.tera-client-stage span {
+  color: #8a947e;
+}
+.tera-client-documents {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+.tera-client-document {
+  border: 1px solid #dfe4d5;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 12px;
+}
+.tera-client-document img {
+  width: 100%;
+  height: 230px;
+  object-fit: contain;
+  background: #eef0e8;
+}
+.tera-client-document span {
+  display: block;
+  padding: 16px;
+  overflow-wrap: anywhere;
+}
+.tera-client-response {
+  padding: 25px;
+  background: #edf1e5;
+  border-radius: 12px;
+}
+.tera-client-response h2 {
+  font-family: Georgia, serif;
+  font-size: 27px;
+  margin-bottom: 8px;
+}
+.tera-response-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
+}
+.tera-client-response p {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #727d63;
+}
+.tera-client-response form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.tera-comment {
+  padding: 14px 0;
+  border-bottom: 1px solid #d9e1cd;
+  font-size: 12px;
+}
+.tera-comment p {
+  white-space: pre-wrap;
+}
+.tera-client-map {
+  height: 420px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 9px;
+}
+.tera-client-map > div {
+  height: 100%;
+}
+.tera-client-content .tera-note {
+  max-width: none;
+}
+.tera-print-button {
+  margin-left: auto;
+}
+@media (max-width: 900px) {
+  .tera-design {
+    padding: 24px 20px;
+  }
+  .tera-workbench-grid {
+    grid-template-columns: 160px minmax(0, 1fr);
+    gap: 18px;
+  }
+  .tera-module-body {
+    padding: 20px;
+  }
+  .tera-cost-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .tera-stage {
+    grid-template-columns: 1fr 1fr;
+  }
+  .tera-stage > label:first-child {
+    grid-column: 1/-1;
+  }
+  .tera-investment-grid {
+    gap: 22px;
+  }
+  .tera-stat-grid > div {
+    padding: 20px 16px;
+  }
+  .tera-discipline-picker {
+    grid-template-columns: 1fr 1fr;
+  }
+  .tera-client-content {
+    padding: 25px;
+  }
+}
+@media (max-width: 640px) {
+  .tera-design {
+    padding: 20px 14px 40px;
+  }
+  .tera-design-header {
+    display: block;
+  }
+  .tera-design-header > button {
+    margin-top: 10px;
+    width: 100%;
+  }
+  .tera-discipline-picker {
+    gap: 7px;
+  }
+  .tera-discipline-picker button {
+    font-size: 11px;
+    padding: 12px 8px;
+  }
+  .tera-stat-grid {
+    grid-template-columns: 1fr;
+  }
+  .tera-stat-grid > div {
+    border-right: 0;
+    border-bottom: 1px solid #e3e7da;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 7px;
+    padding: 17px;
+  }
+  .tera-stat-grid small {
+    align-self: center;
+    font-size: 9px;
+  }
+  .tera-stat-grid strong {
+    font-size: 25px;
+  }
+  .tera-stat-grid span {
+    grid-column: 1/-1;
+  }
+  .tera-investment-grid {
+    grid-template-columns: 1fr;
+    padding: 18px;
+    gap: 23px;
+  }
+  .tera-investment-summary > .tera-note {
+    padding: 0 18px;
+  }
+  .tera-view-tabs {
+    gap: 8px;
+    justify-content: space-between;
+  }
+  .tera-view-tabs button {
+    font-size: 10px;
+    text-align: left;
+  }
+  .tera-workbench-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  .tera-module-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .tera-module-nav > button {
+    font-size: 11px;
+    padding: 12px 9px;
+  }
+  .tera-module-nav > small {
+    display: none;
+  }
+  .tera-module-body,
+  .tera-panel {
+    padding: 18px 15px;
+  }
+  .tera-fields {
+    grid-template-columns: 1fr;
+  }
+  .tera-section-divider {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .tera-cost {
+    padding: 14px 12px;
+  }
+  .tera-cost-footer {
+    grid-template-columns: 1fr;
+  }
+  .tera-check {
+    padding: 0;
+  }
+  .tera-timeline-row {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+  .tera-design-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .tera-client-content {
+    padding: 20px 16px;
+  }
+  .tera-client-section dl.tera-specs {
+    grid-template-columns: 1fr;
+  }
+  .tera-client-documents {
+    grid-template-columns: 1fr;
+  }
+  .tera-client-map {
+    height: 280px;
+  }
+  .tera-client-section h2 {
+    font-size: 27px;
+  }
+  .tera-field input,
+  .tera-field select,
+  .tera-field textarea {
+    font-size: 16px;
+  }
+  .tera-entry summary {
+    padding: 5px 0;
+  }
+  .tera-stage {
+    gap: 12px;
+  }
+  .tera-client-stage {
+    flex-direction: column;
+    gap: 4px;
+  }
+  .tera-client-response {
+    padding: 20px 15px;
+  }
+}
+@media print {
+  .tera-print-button,
+  .tera-response-actions,
+  .tera-client-response form,
+  .proposal-preview {
+    display: none !important;
+  }
+  .tera-client-content {
+    padding: 0;
+  }
+  .tera-investment-summary,
+  .tera-client-entry {
+    break-inside: avoid;
+  }
+  .tera-client-section {
+    break-inside: auto;
+  }
+  .tera-client-document img {
+    max-height: 180px;
+  }
+}

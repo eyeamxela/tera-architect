@@ -5,7 +5,14 @@ const commands = [
     '--env-file-if-exists=.env.local',
     'server/main.ts',
   ],
-  ['node_modules/vinext/bin/vinext.mjs', 'dev', '--host', '127.0.0.1'],
+  [
+    'node_modules/vinext/bin/vinext.mjs',
+    'dev',
+    '--host',
+    '127.0.0.1',
+    '--port',
+    '3010',
+  ],
 ];
 // Use the installed executable entry instead of assuming a global Node/npm.
 const { readFile } = await import('node:fs/promises');

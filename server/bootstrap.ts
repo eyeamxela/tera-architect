@@ -37,7 +37,7 @@ try {
         studio,
         JSON.stringify({
           name: 'TERA',
-          descriptor: 'PROJECTS & CLIENTS',
+          descriptor: 'ARCHITECT EDITION',
           studio,
           lead: name,
         }),

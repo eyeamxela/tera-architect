@@ -1,5 +1,10 @@
 import type { SiteAssessment } from './site-data';
 import { defaultPlanning, type Planning } from './plan-model.ts';
+import {
+  designRows,
+  type DesignScope,
+  type Discipline,
+} from './design-model.ts';
 export type Point = [number, number];
 export type Feature = {
   id: string;
@@ -134,6 +139,7 @@ export const money = (n: number) =>
     maximumFractionDigits: 0,
   }).format(n);
 export type ScopeRow = {
+  discipline?: Discipline;
   id: string;
   name: string;
   description: string;
@@ -144,6 +150,7 @@ export type ScopeRow = {
 };
 export type ManualScopeItem = Omit<ScopeRow, 'total'> & { included: boolean };
 export type SharedScope = {
+  designScope?: DesignScope;
   attachments?: string[];
   documents?: { id: string; name: string; mime: string; url: string }[];
   site?: SiteAssessment;
@@ -159,6 +166,7 @@ export type SharedScope = {
   total: number;
 };
 export type Job = {
+  designScope?: DesignScope;
   clientActivity?: string[];
   attachments?: string[];
   items?: ManualScopeItem[];
@@ -179,6 +187,7 @@ export function scopeRows(
   scale: number,
   spacing: number,
   items: ManualScopeItem[] = [],
+  designScope?: DesignScope,
 ): ScopeRow[] {
   const manual = items
     .filter((item) => item.included)
@@ -186,6 +195,8 @@ export function scopeRows(
       ...item,
       total: Math.round(item.quantity * Math.round(item.rate * 100)) / 100,
     }));
+  manual.push(...designRows(designScope));
+  if (designScope && !designScope.enabled.includes('land')) return manual;
   if (!scale || !Number.isFinite(scale) || scale < 0) return manual;
   return [
     ...features
@@ -199,6 +210,7 @@ export function scopeRows(
               ? Math.round(m.area)
               : Math.round(m.perimeter);
         return {
+          ...(designScope ? { discipline: 'land' as const } : {}),
           id: f.id,
           name: f.name,
           description: f.description,

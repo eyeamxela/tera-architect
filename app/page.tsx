@@ -48,6 +48,12 @@ import {
 } from '@/components/ui/select';
 import LandMap from './land-map';
 import PlanningView from './planning-view';
+import DesignWorkbench, {
+  TemplateSelect,
+  emptyArchitectDraft,
+  InvestmentSummary,
+} from './design-workbench';
+import { designIssues, definitions, designInvestment } from './design-model';
 import SiteCheck from './site-check';
 import { feetPerPixel, pixelPoint, type SiteAssessment } from './site-data';
 import { calculatePlan } from './plan-model';
@@ -105,12 +111,10 @@ function Workspace({
   const workspace = useWorkspace(initial);
   const { projects, jobs } = workspace;
   const brand = workspace.brand;
-  const [view, setView] = useState('client');
+  const [view, setView] = useState('planning');
   const [projectId, setProjectId] = useState(initial.projects[0].id);
   const [busy, setBusy] = useState(false);
-  const [newTemplate, setNewTemplate] = useState<'general' | 'landscape'>(
-    'general',
-  );
+  const [newTemplate, setNewTemplate] = useState('architecture');
   const [updateVisibility, setUpdateVisibility] = useState<
     'internal' | 'client'
   >('internal');
@@ -119,9 +123,7 @@ function Workspace({
   const [planting, setPlanting] = useState(true);
   const [dialog, setDialog] = useState<DialogMode>(null);
   const [notice, setNotice] = useState('');
-  const [fieldNote, setFieldNote] = useState(
-    'Restore the lower pond and extend the orchard east. Keep access clear for the planting crew.',
-  );
+  const [fieldNote, setFieldNote] = useState('');
   const [newName, setNewName] = useState('');
   const [newClient, setNewClient] = useState('');
   const [newLocation, setNewLocation] = useState('');
@@ -140,7 +142,13 @@ function Workspace({
   const project = projects.find((p) => p.id === projectId)!;
   const f = job.features.find((f) => f.id === selected) || job.features[0];
   const m = f ? metrics(f.points, job.scale, f.kind !== 'path') : null;
-  const rows = scopeRows(job.features, job.scale, job.spacing, job.items);
+  const rows = scopeRows(
+    job.features,
+    job.scale,
+    job.spacing,
+    job.items,
+    job.designScope,
+  );
   const total = rows.reduce((s, r) => s + r.total, 0);
   const dirty = job.shared?.revision !== job.revision;
   const investment = calculatePlan(rows, job.features, job.planning);
@@ -175,7 +183,6 @@ function Workspace({
   };
   const startSiteProject = (site: SiteAssessment) => {
     void run(async () => {
-      const initial = makeJob(true);
       const id = await workspace.create({
         name: site.parcel.situs || 'Parcel ' + site.parcel.apn,
         client: 'Client to be assigned',
@@ -183,7 +190,7 @@ function Workspace({
         acres: site.parcel.acres || 0,
         template: 'landscape',
         draft: {
-          planning: initial.planning,
+          ...emptyArchitectDraft('land'),
           features: [],
           items: [],
           site,
@@ -296,11 +303,31 @@ function Workspace({
             })),
             total,
             planning: job.planning,
-            investment: calculatePlan(
-              scopeRows(job.features, job.scale, job.spacing, job.items),
-              job.features,
-              job.planning,
-            ).years,
+            designScope: job.designScope,
+            investment: job.designScope
+              ? designInvestment(
+                  job.designScope,
+                  scopeRows(
+                    job.features,
+                    job.scale,
+                    job.spacing,
+                    job.items,
+                    job.designScope,
+                  ),
+                  job.planning.contingency,
+                  job.planning.budget,
+                )
+              : calculatePlan(
+                  scopeRows(
+                    job.features,
+                    job.scale,
+                    job.spacing,
+                    job.items,
+                    job.designScope,
+                  ),
+                  job.features,
+                  job.planning,
+                ).years,
             sharedPlanning: job.shared?.planning,
             clientStatus: job.shared?.status || 'Not shared',
           };
@@ -460,8 +487,10 @@ function Workspace({
               </TabsTrigger>
             </TabsList>
             <span className="nav-meta">
-              {project.template === 'landscape'
-                ? 'LANDSCAPE TEMPLATE'
+              {job.designScope
+                ? job.designScope.enabled
+                    .map((id) => definitions[id].short)
+                    .join(' / ')
                 : 'PROJECT TEMPLATE'}
             </span>
           </div>
@@ -564,17 +593,27 @@ function Workspace({
               className="build-permission-fieldset"
               disabled={workspace.actor.role === 'crew'}
             >
-              <PlanningView
-                job={job}
-                project={project}
-                onChange={(planning) => edit((j) => ({ ...j, planning }))}
-                onMap={() =>
-                  setView(
-                    project.template === 'general' ? 'scope' : 'workspace',
-                  )
-                }
-                onShare={() => setDialog('share')}
-              />
+              {job.designScope ? (
+                <DesignWorkbench
+                  key={projectId}
+                  job={job}
+                  project={project}
+                  onChange={(planning) => edit((j) => ({ ...j, planning }))}
+                  onDesignChange={(designScope) =>
+                    edit((j) => ({ ...j, designScope }))
+                  }
+                  onMap={() => setView('workspace')}
+                  onShare={() => setDialog('share')}
+                />
+              ) : (
+                <PlanningView
+                  job={job}
+                  project={project}
+                  onChange={(planning) => edit((j) => ({ ...j, planning }))}
+                  onMap={() => setView('workspace')}
+                  onShare={() => setDialog('share')}
+                />
+              )}
             </fieldset>
           </TabsContent>
           <TabsContent value="workspace" className="tab-panel">
@@ -597,7 +636,7 @@ function Workspace({
                   </div>
                   <div>
                     <span>Next review</span>
-                    <b>Sep 18</b>
+                    <b>To confirm</b>
                   </div>
                 </div>
                 <div className="section-label spaced">
@@ -988,13 +1027,10 @@ function Workspace({
                 job={job}
                 project={project}
                 onUpdate={updateFeature}
+                onPlan={() => setView('planning')}
                 onItemsChange={(items) => edit((j) => ({ ...j, items }))}
                 onShare={() => setDialog('share')}
-                onMap={() =>
-                  setView(
-                    project.template === 'general' ? 'scope' : 'workspace',
-                  )
-                }
+                onMap={() => setView('workspace')}
               />
             </fieldset>
           </TabsContent>
@@ -1006,7 +1042,7 @@ function Workspace({
               onRequest={requestChanges}
               onComment={addComment}
               onUpdate={addUpdate}
-              onScope={() => setView('scope')}
+              onScope={() => setView(job.designScope ? 'planning' : 'scope')}
             />
           </TabsContent>
         </Tabs>
@@ -1018,7 +1054,7 @@ function Workspace({
               : project.name.toUpperCase() + ' · ' + project.id}
           </span>
           <span>Planning → Scope → Client review → Fieldwork</span>
-          <span>PUBLIC GIS · DEMO PRICING</span>
+          <span>TERA ARCHITECT · PROJECT ESTIMATES</span>
         </footer>
         <Dialog
           open={dialog !== null}
@@ -1067,11 +1103,15 @@ function Workspace({
                       client: newClient.trim(),
                       location: newLocation.trim(),
                       acres: Number(newAcres) || 0,
-                      template: newTemplate,
+                      template:
+                        newTemplate === 'land' || newTemplate === 'all'
+                          ? 'landscape'
+                          : 'general',
+                      draft: emptyArchitectDraft(newTemplate),
                     });
                     setProjectId(id);
                     setSelected('');
-                    setView('scope');
+                    setView('planning');
                     setDialog(null);
                     setNewName('');
                     setNewClient('');
@@ -1105,18 +1145,7 @@ function Workspace({
                     placeholder="Client or family name"
                   />
                 </label>
-                <label>
-                  Project template
-                  <select
-                    value={newTemplate}
-                    onChange={(e) =>
-                      setNewTemplate(e.target.value as 'general' | 'landscape')
-                    }
-                  >
-                    <option value="general">General project</option>
-                    <option value="landscape">Landscape & land</option>
-                  </select>
-                </label>
+                <TemplateSelect value={newTemplate} onChange={setNewTemplate} />
                 <div className="form-pair">
                   <label>
                     Location
@@ -1391,33 +1420,53 @@ function Workspace({
                   </span>
                   <b>{money(total)} full base scope</b>
                 </div>
-                <div className="share-planning">
-                  <div>
-                    <span>Funded work + contingency</span>
-                    <b>{money(investment.allowance)}</b>
+                {job.designScope ? (
+                  <>
+                    <InvestmentSummary
+                      scope={job.designScope}
+                      rows={rows}
+                      planning={job.planning}
+                    />
+                    {designIssues(job.designScope).length > 0 && (
+                      <div className="tera-readiness">
+                        <b>Before publishing</b>
+                        <ul>
+                          {designIssues(job.designScope).map((issue, i) => (
+                            <li key={i}>{issue}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="share-planning">
+                    <div>
+                      <span>Funded work + contingency</span>
+                      <b>{money(investment.allowance)}</b>
+                    </div>
+                    <div>
+                      <span>
+                        {project.template === 'general'
+                          ? 'Funded work packages'
+                          : 'Five-year tree care'}
+                      </span>
+                      <b>
+                        {project.template === 'general'
+                          ? investment.funded.length
+                          : money(investment.atYear(5).care)}
+                      </b>
+                    </div>
+                    <div>
+                      <span>Installation window</span>
+                      <b>{job.planning.months} months</b>
+                    </div>
+                    <p>
+                      {investment.funded.length} of {investment.phases.length}{' '}
+                      work areas funded. Deferred work stays outside the funded
+                      proposal.
+                    </p>
                   </div>
-                  <div>
-                    <span>
-                      {project.template === 'general'
-                        ? 'Funded work packages'
-                        : 'Five-year tree care'}
-                    </span>
-                    <b>
-                      {project.template === 'general'
-                        ? investment.funded.length
-                        : money(investment.atYear(5).care)}
-                    </b>
-                  </div>
-                  <div>
-                    <span>Installation window</span>
-                    <b>{job.planning.months} months</b>
-                  </div>
-                  <p>
-                    {investment.funded.length} of {investment.phases.length}{' '}
-                    work areas funded. Deferred work stays outside the funded
-                    proposal.
-                  </p>
-                </div>
+                )}
                 <p className="muted-copy">
                   This freezes the drawing, budget, schedule, and assumptions
                   for the client. Later edits stay in your draft until you share
@@ -1427,7 +1476,10 @@ function Workspace({
                   className="primary-action wide"
                   onClick={share}
                   disabled={
-                    busy || !rows.length || workspace.actor.role !== 'owner'
+                    busy ||
+                    !rows.length ||
+                    workspace.actor.role !== 'owner' ||
+                    !!(job.designScope && designIssues(job.designScope).length)
                   }
                 >
                   <Send size={15} /> Publish & create client link

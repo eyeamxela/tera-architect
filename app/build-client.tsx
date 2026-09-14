@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { Job, Project } from './data';
 import type { Brand } from './brand';
+import { TemplateSelect, emptyArchitectDraft } from './design-workbench';
 
 export type WorkspaceData = {
   brand: Brand;
@@ -99,7 +100,7 @@ export function SignIn({
     <section className="build-access">
       <div className="build-access-card">
         <div className="build-wordmark">
-          TERA<span>PROJECTS & CLIENTS</span>
+          TERA<span>ARCHITECT EDITION</span>
         </div>
         <h1>{title}</h1>
         <p>Scopes, plans, and the work ahead.</p>
@@ -285,6 +286,7 @@ function EmptyWorkspace({
   onCreated: () => void;
   onLogout: () => Promise<void>;
 }) {
+  const [template, setTemplate] = useState('architecture');
   const [name, setName] = useState(''),
     [client, setClient] = useState(''),
     [busy, setBusy] = useState(false),
@@ -308,7 +310,11 @@ function EmptyWorkspace({
                     client,
                     location: '',
                     acres: 0,
-                    template: 'general',
+                    template:
+                      template === 'land' || template === 'all'
+                        ? 'landscape'
+                        : 'general',
+                    draft: emptyArchitectDraft(template),
                   },
                 });
                 onCreated();
@@ -319,6 +325,7 @@ function EmptyWorkspace({
               }
             }}
           >
+            <TemplateSelect value={template} onChange={setTemplate} />
             <label htmlFor="build-client-field-3">
               Project name
               <Input

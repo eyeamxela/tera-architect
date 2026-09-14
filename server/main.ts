@@ -23,7 +23,7 @@ if (local) {
 }
 const c: Config = {
   mode: local ? 'local' : 'production',
-  appOrigin: process.env.BUILD_APP_ORIGIN || 'http://localhost:3000',
+  appOrigin: process.env.BUILD_APP_ORIGIN || 'http://localhost:3010',
   shareSecret: process.env.BUILD_SHARE_SECRET || localSecret,
   workerSecret:
     process.env.BUILD_WORKER_SECRET || (local ? 'local-worker-test-key' : ''),
@@ -66,9 +66,9 @@ if (process.argv.includes('--migrate') && !local) {
   process.exit(0);
 }
 const service = new BuildService(db, c.shareSecret);
-if (local) await seedLocal(service);
+if (local) await seedLocal(service, true);
 const api = createApi(service, c);
-const port = Number(process.env.BUILD_API_PORT || 4311);
+const port = Number(process.env.BUILD_API_PORT || 4312);
 const server = createServer(async (req, res) => {
   try {
     const chunks: Buffer[] = [];

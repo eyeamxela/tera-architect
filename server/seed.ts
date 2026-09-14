@@ -31,7 +31,7 @@ export const localAccounts = [
   },
 ];
 export const localOrg = '20000000-0000-4000-8000-000000000001';
-export async function seedLocal(service: BuildService) {
+export async function seedLocal(service: BuildService, blank = false) {
   if (
     await one(service.db, 'SELECT id FROM build_organizations WHERE id=$1', [
       localOrg,
@@ -46,7 +46,7 @@ export async function seedLocal(service: BuildService) {
         'Example Studio',
         JSON.stringify({
           name: 'TERA',
-          descriptor: 'PROJECTS & CLIENTS',
+          descriptor: 'ARCHITECT EDITION',
           studio: 'Example Studio',
           lead: 'Project team',
         }),
@@ -64,6 +64,7 @@ export async function seedLocal(service: BuildService) {
         );
     }
   });
+  if (blank) return;
   const owner = await service.actor(localAccounts[0].id);
   const landscape = await service.createProject(
     owner,

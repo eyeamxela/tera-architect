@@ -8,7 +8,7 @@ import {
 } from 'react';
 export const brand = {
   name: PRODUCT_NAME,
-  descriptor: 'PROJECTS & CLIENTS',
+  descriptor: 'ARCHITECT EDITION',
   studio: 'Example Studio',
   lead: 'Project team',
 };

@@ -35,7 +35,13 @@ export default function PlanningView({
 }) {
   const [year, setYear] = useState(5);
   const p = job.planning;
-  const rows = scopeRows(job.features, job.scale, job.spacing, job.items);
+  const rows = scopeRows(
+    job.features,
+    job.scale,
+    job.spacing,
+    job.items,
+    job.designScope,
+  );
   const plan = calculatePlan(rows, job.features, p);
   const outcome = plan.atYear(year);
   const update = (patch: Partial<Planning>) => onChange({ ...p, ...patch });

@@ -4,7 +4,7 @@ async function proxy(request: Request) {
   const config = env as unknown as Record<string, string | undefined>;
   const development = import.meta.env.DEV;
   const origin =
-    config.BUILD_API_ORIGIN || (development ? 'http://127.0.0.1:4311' : '');
+    config.BUILD_API_ORIGIN || (development ? 'http://127.0.0.1:4312' : '');
   if (!origin)
     return Response.json(
       { error: 'TERA is not connected to its API yet.' },

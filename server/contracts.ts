@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { designSchema } from './design-schema.ts';
 import type { Job } from '../app/data.ts';
 
 const money = z.number().min(0).max(10_000_000);
@@ -45,6 +46,7 @@ const item = z
   .strict();
 export const draftSchema = z
   .object({
+    designScope: designSchema.optional(),
     planning: z
       .object({
         budget: money,
@@ -84,6 +86,12 @@ export const draftSchema = z
   .strict()
   .superRefine((value, ctx) => {
     const ids = [...value.features, ...value.items].map((x) => x.id);
+    if (ids.some((id) => id.startsWith('design:')))
+      ctx.addIssue({
+        code: 'custom',
+        message:
+          'The design: item ID prefix is reserved for generated estimates.',
+      });
     if (new Set(ids).size !== ids.length)
       ctx.addIssue({
         code: 'custom',
@@ -93,6 +101,7 @@ export const draftSchema = z
 export type Draft = z.infer<typeof draftSchema>;
 export const draftFromJob = (job: Job) => ({
   planning: job.planning,
+  ...(job.designScope ? { designScope: job.designScope } : {}),
   features: job.features,
   items: job.items || [],
   attachments: job.attachments || [],

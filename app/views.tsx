@@ -98,10 +98,13 @@ export function ProjectList({
               Object.values(jobs).reduce(
                 (s, j) =>
                   s +
-                  scopeRows(j.features, j.scale, j.spacing, j.items).reduce(
-                    (a, r) => a + r.total,
-                    0,
-                  ),
+                  scopeRows(
+                    j.features,
+                    j.scale,
+                    j.spacing,
+                    j.items,
+                    j.designScope,
+                  ).reduce((a, r) => a + r.total, 0),
                 0,
               ),
             )}
@@ -145,7 +148,7 @@ export function ProjectList({
               <TableHead>PROJECT / CLIENT</TableHead>
               <TableHead>LOCATION</TableHead>
               <TableHead>STAGE</TableHead>
-              <TableHead>SCOPE VALUE</TableHead>
+              <TableHead>PRICED SCOPE</TableHead>
               <TableHead> </TableHead>
             </TableRow>
           </TableHeader>
@@ -187,6 +190,7 @@ export function ProjectList({
                       jobs[p.id]?.scale || 0,
                       jobs[p.id]?.spacing || 25,
                       jobs[p.id]?.items || [],
+                      jobs[p.id]?.designScope,
                     ).reduce((s, r) => s + r.total, 0),
                   )}
                 </TableCell>
@@ -227,7 +231,7 @@ export function ProjectList({
               </span>
               <span className="mobile-project-bottom">
                 <span>
-                  <small>SCOPE VALUE</small>
+                  <small>PRICED SCOPE</small>
                   <b>
                     {money(
                       scopeRows(
@@ -235,6 +239,7 @@ export function ProjectList({
                         jobs[p.id]?.scale || 0,
                         jobs[p.id]?.spacing || 25,
                         jobs[p.id]?.items || [],
+                        jobs[p.id]?.designScope,
                       ).reduce((sum, row) => sum + row.total, 0),
                     )}
                   </b>
@@ -283,16 +288,24 @@ export function ScopeView({
   onShare,
   onMap,
   onItemsChange,
+  onPlan,
 }: {
   job: Job;
   project: Project;
   onUpdate: (id: string, patch: Partial<Feature>) => void;
   onShare: () => void;
   onMap: () => void;
+  onPlan: () => void;
   onItemsChange: (items: ManualScopeItem[]) => void;
 }) {
   const brand = useBrand();
-  const rows = scopeRows(job.features, job.scale, job.spacing, job.items);
+  const rows = scopeRows(
+    job.features,
+    job.scale,
+    job.spacing,
+    job.items,
+    job.designScope,
+  );
   const total = rows.reduce((s, r) => s + r.total, 0);
   const draft = job.shared?.revision !== job.revision;
   return (
@@ -340,6 +353,19 @@ export function ScopeView({
           A coordinated scope with clear deliverables, quantities, and
           allowances. Select the work to include in this proposal.
         </p>
+        {job.designScope && (
+          <div className="tera-panel">
+            <h3>Discipline scopes & specifications</h3>
+            <p className="tera-note">
+              Architecture, interiors, furniture and land estimates are managed
+              in Plan & investment. Add shared coordination or other common work
+              below; these packages stay included across template selections.
+            </p>
+            <Button variant="outline" onClick={onPlan}>
+              Edit discipline scopes
+            </Button>
+          </div>
+        )}
         <ManualScopeItems items={job.items || []} onChange={onItemsChange} />
         <div className="scope-items">
           {!!job.features.length && !job.scale && (
@@ -348,7 +374,10 @@ export function ScopeView({
               quantities.
             </p>
           )}
-          {job.features.map((f, i) => {
+          {(job.designScope && !job.designScope.enabled.includes('land')
+            ? []
+            : job.features
+          ).map((f, i) => {
             const row = scopeRows([f], job.scale, job.spacing)[0];
             return (
               <article
@@ -423,7 +452,7 @@ export function ScopeView({
             );
           })}
         </div>
-        {!job.features.length && !job.items?.length && (
+        {!job.designScope && !job.features.length && !job.items?.length && (
           <div className="empty-state">
             <FileText />
             <h3>Define the first work package</h3>
@@ -474,7 +503,7 @@ export function ScopeView({
       <aside className="scope-summary">
         <div className="section-label">PROPOSAL SUMMARY</div>
         <div className="summary-value">
-          <small>Full scope before contingency</small>
+          <small>Priced scope before tax & contingency</small>
           <strong>{rows.length ? money(total) : '—'}</strong>
           <span>USD · entered rates</span>
         </div>
@@ -497,7 +526,10 @@ export function ScopeView({
         <Button
           className="primary-action wide"
           disabled={
-            !rows.length || (job.features.some((f) => f.included) && !job.scale)
+            !rows.length ||
+            ((!job.designScope || job.designScope.enabled.includes('land')) &&
+              job.features.some((f) => f.included) &&
+              !job.scale)
           }
           onClick={onShare}
         >

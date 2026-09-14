@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { runOnce, deliverOnce, type WorkerConfig } from './worker-runtime.ts';
 const c: WorkerConfig = {
-  api: process.env.BUILD_API_ORIGIN || 'http://127.0.0.1:4311',
+  api: process.env.BUILD_API_ORIGIN || 'http://127.0.0.1:4312',
   secret: process.env.BUILD_WORKER_SECRET || '',
   hermes: process.env.HERMES_API_ORIGIN || 'http://127.0.0.1:8642',
   hermesKey: process.env.HERMES_API_KEY || '',

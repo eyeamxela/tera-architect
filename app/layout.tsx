@@ -4,6 +4,7 @@ import './globals.css';
 import './studio.css';
 import './build.css';
 import './mobile.css';
+import './design.css';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -16,9 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'TERA · Projects & Clients',
+  title: 'TERA Architect · Land, Architecture & Interiors',
   description:
-    'Plan projects, shape a scope, and keep clients connected from the first idea to delivery.',
+    'One client plan for land development, architecture, interior design and custom furniture.',
 };
 
 export default function RootLayout({

@@ -2,5 +2,5 @@
 api.your-domain.example {
     @worker path /api/build/worker/*
     respond @worker 404
-    reverse_proxy 127.0.0.1:4311
+    reverse_proxy 127.0.0.1:4312
 }

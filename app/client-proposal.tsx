@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import ArchitectProposal from './architect-proposal';
 import { useBrand } from './brand';
 import {
   ArrowDownToLine,
@@ -69,7 +70,16 @@ export type ClientProposalProps = {
   onScope: () => void;
 };
 
-export default function ClientProposal({
+export default function ClientProposal(props: ClientProposalProps) {
+  return (
+    props.job.shared ? props.job.shared.designScope : props.job.designScope
+  ) ? (
+    <ArchitectProposal {...props} />
+  ) : (
+    <LegacyClientProposal {...props} />
+  );
+}
+function LegacyClientProposal({
   job,
   project,
   onApprove,
