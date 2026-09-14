@@ -8,6 +8,8 @@ import {
   disciplineIds,
   makeDesignScope,
   toggleDiscipline,
+  designPresetId,
+  applyDesignPreset,
   designRows,
   designIssues,
   designInvestment,
@@ -359,4 +361,31 @@ test('blank startup, durable drafts, permissions and immutable modular client re
     await db.close();
     await rm(dir, { recursive: true, force: true });
   }
+});
+
+test('switching live presets preserves specifications, rates and custom combinations', () => {
+  const original = priced();
+  original.sections.architecture.brief.intent =
+    'Keep the existing structural scheme';
+  original.sections.furniture.entries = [
+    {
+      id: 'table',
+      values: { name: 'Dining table', width: 2400, dimensionUnit: 'mm' },
+    },
+  ];
+  const savedSections = structuredClone(original.sections);
+  let scope = applyDesignPreset(original, 'furniture');
+  assert.equal(designPresetId(scope), 'furniture');
+  assert.deepEqual(scope.enabled, ['furniture']);
+  assert.deepEqual(scope.sections, savedSections);
+  scope = toggleDiscipline(scope, 'interiors');
+  assert.equal(designPresetId(scope), 'custom');
+  scope = applyDesignPreset(scope, 'all');
+  assert.equal(designPresetId(scope), 'all');
+  assert.deepEqual(scope.sections, savedSections);
+  assert.deepEqual(original.enabled, disciplineIds);
+  // The dropdown must recognize a preset irrespective of add/remove order.
+  scope.enabled.reverse();
+  assert.equal(designPresetId(scope), 'all');
+  assert.deepEqual(applyDesignPreset(scope, 'not-a-template'), scope);
 });

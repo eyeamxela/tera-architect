@@ -13,7 +13,7 @@ npm ci
 npm run dev:all
 ```
 
-Open [localhost:3010](http://localhost:3010). Choose **Morgan · Owner** in the local test login. The workspace starts with **zero projects**, no client data, no priced estimates and no sample property. The dashboard opens immediately, even with no projects. Use **New project** when you want to add one and choose its starting template. The example accounts demonstrate roles; they are not real users and local sign-in is disabled in production mode.
+Open [localhost:3010](http://localhost:3010). Choose **Morgan · Owner** in the local test login. The workspace starts with **zero projects**, no client data, no priced estimates and no sample property. The dashboard opens immediately with the original TERA navigation, even with no projects. Returning to Dashboard remembers the selected project. Use **New project** to create one, then switch its template in **Plan & investment** or combine disciplines with the scope toggles. The example accounts demonstrate roles; they are not real users and local sign-in is disabled in production mode.
 
 The UI uses port **3010**, the API **4312**. Drafts, files and the local share-signing secret persist in ignored `.build-local/`. Stop both processes with Ctrl+C. Local client links only work while this local server is reachable; they are not internet deployments.
 

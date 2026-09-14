@@ -5,7 +5,7 @@ Verified locally on 13 September 2026, using Node 22.23.2.
 ## Passed
 
 - `npm run check`: TypeScript completed without errors.
-- `npm test`: **45 tests passed, 0 failed**. This includes the 37 inherited geometry, planning, GIS, API, permission and worker regression tests plus 8 architect-edition tests.
+- `npm test`: **46 tests passed, 0 failed**. This includes the 37 inherited geometry, planning, GIS, API, permission and worker regression tests plus 9 architect-edition tests.
 - Sites production build helper (`build-site.mjs`, invoking `npm run build`): passed. Frontend, API proxy and client share routes compiled. Vinext emits its existing informational route-classification notice.
 - Local UI readiness: `http://localhost:3010/` returned HTTP 200. API started on loopback port 4312 with persistent local storage.
 - Read-only integration review found no remaining critical issue in the examined pricing, persistence, authorization and publication paths after fixes.
@@ -13,6 +13,7 @@ Verified locally on 13 September 2026, using Node 22.23.2.
 
 ## Architect-edition coverage
 
+- Live template switching preserves entered briefs, furniture specifications, prices and timing; custom combinations are recognized regardless of selection order.
 - All 15 nonempty combinations of land, architecture, interiors and furniture.
 - Excluding a module removes its estimates and tax while preserving its private draft.
 - Nullable prices/quantities remain unpriced; an explicit zero is accepted.

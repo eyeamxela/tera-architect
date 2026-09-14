@@ -400,6 +400,23 @@ export function makeDesignScope(
   };
 }
 
+/** A template selects disciplines without replacing any saved project work. */
+export function designPresetId(scope: DesignScope): string {
+  return (
+    presets.find(
+      (p) =>
+        p.enabled.length === scope.enabled.length &&
+        p.enabled.every((id) => scope.enabled.includes(id)),
+    )?.id || 'custom'
+  );
+}
+export function applyDesignPreset(
+  scope: DesignScope,
+  presetId: string,
+): DesignScope {
+  const preset = presets.find((p) => p.id === presetId);
+  return preset ? { ...scope, enabled: [...preset.enabled] } : scope;
+}
 export function toggleDiscipline(
   scope: DesignScope,
   id: Discipline,

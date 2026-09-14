@@ -15,6 +15,8 @@ import {
   disciplineIds,
   presets,
   toggleDiscipline,
+  applyDesignPreset,
+  designPresetId,
   designInvestment,
   designIssues,
   costTotal,
@@ -30,21 +32,30 @@ import type { Planning } from './plan-model';
 export function TemplateSelect({
   value,
   onChange,
+  label = 'Starting template',
+  hint = 'You can combine disciplines inside the project.',
 }: {
   value: string;
   onChange: (id: string) => void;
+  label?: string;
+  hint?: string;
 }) {
   return (
     <label className="tera-field">
-      Starting template
+      {label}
       <select value={value} onChange={(e) => onChange(e.target.value)}>
+        {value === 'custom' && (
+          <option value="custom" disabled>
+            Custom combination
+          </option>
+        )}
         {presets.map((p) => (
           <option key={p.id} value={p.id}>
             {p.name}
           </option>
         ))}
       </select>
-      <small>You can combine disciplines inside the project.</small>
+      {hint && <small>{hint}</small>}
     </label>
   );
 }
@@ -328,20 +339,26 @@ export default function DesignWorkbench({
     });
   return (
     <section className="tera-design">
-      <header className="tera-design-header">
+      <header className="planning-title tera-planning-title">
         <div>
-          <span className="eyebrow">TERA / ARCHITECT EDITION</span>
-          <h2>
-            One vision.
-            <br />
-            <em>Every detail, considered.</em>
-          </h2>
-          <p>{project.name} · Shape a scope around what your client needs.</p>
+          <span className="eyebrow">PROJECT PLANNING</span>
+          <h2>A clear path from scope to delivery.</h2>
+          <p>Adjust the scope, budget, and schedule for {project.name}.</p>
         </div>
         <Button onClick={onShare}>
           Review client plan <ArrowUpRight size={16} />
         </Button>
       </header>
+      <div className="tera-template-toolbar">
+        <TemplateSelect
+          label="Project template"
+          value={designPresetId(scope)}
+          onChange={(preset) =>
+            onDesignChange(applyDesignPreset(scope, preset))
+          }
+          hint="Switch templates here, or add and remove scopes below. Your project details stay saved."
+        />
+      </div>
       <div className="tera-discipline-picker" aria-label="Included disciplines">
         {disciplineIds.map((d) => (
           <button

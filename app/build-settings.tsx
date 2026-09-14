@@ -31,6 +31,7 @@ export default function BuildSettings({
   projectId: string;
   onSaved: () => void;
 }) {
+  const hasProject = workspace.projects.some((p) => p.id === projectId);
   const [brand, setBrand] = useState(workspace.brand),
     [team, setTeam] = useState<TeamMember[]>([]),
     [inbox, setInbox] = useState<Inbox | null>(null),
@@ -118,8 +119,9 @@ export default function BuildSettings({
       <article>
         <h2>Project team</h2>
         <p>
-          Assign existing team members to{' '}
-          {workspace.projects.find((p) => p.id === projectId)?.name}.
+          {hasProject
+            ? `Assign team members to ${workspace.projects.find((p) => p.id === projectId)?.name}.`
+            : 'Add your team now. Assign members after creating a project.'}
         </p>
         {team.map((m) => (
           <div key={m.id} className="build-team-member">
@@ -147,33 +149,38 @@ export default function BuildSettings({
             </span>
           </div>
         ))}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            void run(
-              () =>
-                api(`/projects/${projectId}/assign`, {
-                  method: 'POST',
-                  body: { userId: member },
-                }),
-              'Team member assigned.',
-            );
-          }}
-        >
-          <label>
-            Team member
-            <select value={member} onChange={(e) => setMember(e.target.value)}>
-              {team
-                .filter((m) => m.active)
-                .map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.display_name} · {m.role}
-                  </option>
-                ))}
-            </select>
-          </label>
-          <Button disabled={busy || !member}>Assign to project</Button>
-        </form>
+        {hasProject && (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              void run(
+                () =>
+                  api(`/projects/${projectId}/assign`, {
+                    method: 'POST',
+                    body: { userId: member },
+                  }),
+                'Team member assigned.',
+              );
+            }}
+          >
+            <label>
+              Team member
+              <select
+                value={member}
+                onChange={(e) => setMember(e.target.value)}
+              >
+                {team
+                  .filter((m) => m.active)
+                  .map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.display_name} · {m.role}
+                    </option>
+                  ))}
+              </select>
+            </label>
+            <Button disabled={busy || !member}>Assign to project</Button>
+          </form>
+        )}
       </article>
       <article>
         <h2>Add a team member</h2>
@@ -235,45 +242,48 @@ export default function BuildSettings({
           Allow this client to comment and approve the current project after
           verifying their email. No invitation message is sent here.
         </p>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            void run(
-              () =>
-                api(`/projects/${projectId}/invite`, {
-                  method: 'POST',
-                  body: { name, email },
-                }),
-              'Client access granted. Share the project link when ready.',
-            );
-          }}
-        >
-          <label htmlFor="build-settings-field-6">
-            Client name
-            <Input
-              id="build-settings-field-6"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </label>
-          <label htmlFor="build-settings-field-7">
-            Client email
-            <Input
-              id="build-settings-field-7"
-              required
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </label>
-          <Button disabled={busy}>Grant client access</Button>
-        </form>
+        {hasProject && (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              void run(
+                () =>
+                  api(`/projects/${projectId}/invite`, {
+                    method: 'POST',
+                    body: { name, email },
+                  }),
+                'Client access granted. Share the project link when ready.',
+              );
+            }}
+          >
+            <label htmlFor="build-settings-field-6">
+              Client name
+              <Input
+                id="build-settings-field-6"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </label>
+            <label htmlFor="build-settings-field-7">
+              Client email
+              <Input
+                id="build-settings-field-7"
+                required
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </label>
+            <Button disabled={busy}>Grant client access</Button>
+          </form>
+        )}
         <Button
           variant="ghost"
-          disabled={busy}
+          disabled={busy || !hasProject}
           onClick={() =>
             void run(async () => {
+              if (!hasProject) return;
               await api(`/projects/${projectId}/revoke`, { method: 'POST' });
               onSaved();
             }, 'Old share links revoked. Publish again to create a new link.')
@@ -289,58 +299,60 @@ export default function BuildSettings({
             ? 'Bot credentials are configured. Verify webhook delivery before field use.'
             : 'Telegram is not connected. The receiver and worker can be tested locally.'}
         </p>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            void run(
-              () =>
-                api('/integrations/telegram', {
-                  method: 'POST',
-                  body: {
-                    userId: member,
-                    projectId,
-                    senderId,
-                    chatId,
-                    threadId,
-                  },
-                }),
-              'Telegram identity and project route saved.',
-            );
-          }}
-        >
-          <label htmlFor="build-settings-field-8">
-            Telegram sender ID
-            <Input
-              id="build-settings-field-8"
-              required
-              inputMode="numeric"
-              value={senderId}
-              onChange={(e) => setSenderId(e.target.value)}
-            />
-          </label>
-          <label htmlFor="build-settings-field-9">
-            Chat ID
-            <Input
-              id="build-settings-field-9"
-              required
-              value={chatId}
-              onChange={(e) => setChatId(e.target.value)}
-            />
-          </label>
-          <label htmlFor="build-settings-field-10">
-            Topic ID, if used
-            <Input
-              id="build-settings-field-10"
-              value={threadId}
-              onChange={(e) => setThreadId(e.target.value)}
-            />
-          </label>
-          <p>
-            Links the team member selected above to this project. Membership is
-            checked for every action.
-          </p>
-          <Button disabled={busy}>Save Telegram route</Button>
-        </form>
+        {hasProject && (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              void run(
+                () =>
+                  api('/integrations/telegram', {
+                    method: 'POST',
+                    body: {
+                      userId: member,
+                      projectId,
+                      senderId,
+                      chatId,
+                      threadId,
+                    },
+                  }),
+                'Telegram identity and project route saved.',
+              );
+            }}
+          >
+            <label htmlFor="build-settings-field-8">
+              Telegram sender ID
+              <Input
+                id="build-settings-field-8"
+                required
+                inputMode="numeric"
+                value={senderId}
+                onChange={(e) => setSenderId(e.target.value)}
+              />
+            </label>
+            <label htmlFor="build-settings-field-9">
+              Chat ID
+              <Input
+                id="build-settings-field-9"
+                required
+                value={chatId}
+                onChange={(e) => setChatId(e.target.value)}
+              />
+            </label>
+            <label htmlFor="build-settings-field-10">
+              Topic ID, if used
+              <Input
+                id="build-settings-field-10"
+                value={threadId}
+                onChange={(e) => setThreadId(e.target.value)}
+              />
+            </label>
+            <p>
+              Links the team member selected above to this project. Membership
+              is checked for every action.
+            </p>
+            <Button disabled={busy}>Save Telegram route</Button>
+          </form>
+        )}
         {inbox?.items?.map((i) => (
           <div className="build-team-member" key={i.id}>
             <span>
