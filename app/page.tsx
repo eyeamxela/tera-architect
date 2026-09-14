@@ -4,6 +4,7 @@ import { BrandProvider } from './brand';
 import { WorkspaceGate, api, type WorkspaceData } from './build-client';
 import { useWorkspace } from './use-workspace';
 import BuildSettings from './build-settings';
+import WorkspaceDashboard from './workspace-dashboard';
 import ProjectFiles from './project-files';
 import {
   Map,
@@ -49,7 +50,6 @@ import {
 import LandMap from './land-map';
 import PlanningView from './planning-view';
 import DesignWorkbench, {
-  TemplateSelect,
   emptyArchitectDraft,
   InvestmentSummary,
 } from './design-workbench';
@@ -57,29 +57,20 @@ import { designIssues, definitions, designInvestment } from './design-model';
 import SiteCheck from './site-check';
 import { feetPerPixel, pixelPoint, type SiteAssessment } from './site-data';
 import { calculatePlan } from './plan-model';
-import { ProjectList, ScopeView, ClientView } from './views';
+import { ScopeView, ClientView } from './views';
 import {
-  projects as sampleProjects,
   Feature,
   Job,
   Point,
   metrics,
   plantingPoints,
-  makeJob,
   scopeRows,
   money,
   layoutFits,
   validPolygon,
 } from './data';
 
-type DialogMode =
-  | 'new'
-  | 'scale'
-  | 'share'
-  | 'draw'
-  | 'intake'
-  | 'update'
-  | null;
+type DialogMode = 'scale' | 'share' | 'draw' | 'intake' | 'update' | null;
 function FeatureIcon({ kind, size = 17 }: { kind: string; size?: number }) {
   return kind === 'pond' ? (
     <Waves size={size} />
@@ -109,12 +100,59 @@ function Workspace({
   onLogout: () => Promise<void>;
 }) {
   const workspace = useWorkspace(initial);
+  const [selection, setSelection] = useState<{
+    id: string;
+    view: string;
+  } | null>(null);
+  const selectProject = (id: string, view = 'planning') =>
+    setSelection({ id, view });
+  const selectedProject = workspace.projects.find(
+    (p) => p.id === selection?.id,
+  );
+  if (!selectedProject || !workspace.jobs[selectedProject.id]) {
+    return (
+      <WorkspaceDashboard
+        workspace={workspace}
+        mode={mode}
+        onOpen={selectProject}
+        onLogout={onLogout}
+      />
+    );
+  }
+  return (
+    <ProjectWorkspace
+      key={selectedProject.id}
+      workspace={workspace}
+      projectId={selectedProject.id}
+      onSelectProject={selectProject}
+      initialView={selection?.view || 'planning'}
+      mode={mode}
+      onLogout={onLogout}
+      onDashboard={() => setSelection(null)}
+    />
+  );
+}
+function ProjectWorkspace({
+  workspace,
+  projectId,
+  onSelectProject,
+  initialView,
+  mode,
+  onLogout,
+  onDashboard,
+}: {
+  workspace: ReturnType<typeof useWorkspace>;
+  projectId: string;
+  onSelectProject: (id: string, view?: string) => void;
+  initialView: string;
+  mode: string;
+  onLogout: () => Promise<void>;
+  onDashboard: () => void;
+}) {
   const { projects, jobs } = workspace;
   const brand = workspace.brand;
-  const [view, setView] = useState('planning');
-  const [projectId, setProjectId] = useState(initial.projects[0].id);
+  const [view, setView] = useState(initialView);
   const [busy, setBusy] = useState(false);
-  const [newTemplate, setNewTemplate] = useState('architecture');
   const [updateVisibility, setUpdateVisibility] = useState<
     'internal' | 'client'
   >('internal');
@@ -124,10 +162,6 @@ function Workspace({
   const [dialog, setDialog] = useState<DialogMode>(null);
   const [notice, setNotice] = useState('');
   const [fieldNote, setFieldNote] = useState('');
-  const [newName, setNewName] = useState('');
-  const [newClient, setNewClient] = useState('');
-  const [newLocation, setNewLocation] = useState('');
-  const [newAcres, setNewAcres] = useState('');
   const [calibration, setCalibration] = useState<Point[]>([]);
   const [distance, setDistance] = useState('100');
   const [scaleError, setScaleError] = useState('');
@@ -170,6 +204,14 @@ function Workspace({
       setBusy(false);
     }
   };
+  const changeView = (next: string) => {
+    if (next === 'projects')
+      void run(async () => {
+        await workspace.flushAll();
+        onDashboard();
+      });
+    else setView(next);
+  };
   const updateFeature = (id: string, patch: Partial<Feature>) =>
     edit((j) => ({
       ...j,
@@ -177,7 +219,7 @@ function Workspace({
     }));
   const openProject = (id: string) => {
     fileRequest.current++;
-    setProjectId(id);
+    onSelectProject(id);
     setSelected(jobs[id]?.features[0]?.id || '');
     setView('planning');
   };
@@ -200,9 +242,7 @@ function Workspace({
           imageHeight: 800,
         },
       });
-      setProjectId(id);
-      setSelected('');
-      setView('workspace');
+      onSelectProject(id, 'workspace');
       notify('Property saved with its sourced terrain base.');
     });
   };
@@ -356,7 +396,7 @@ function Workspace({
         <header className="topbar">
           <button
             className="brand brand-button"
-            onClick={() => setView('projects')}
+            onClick={() => changeView('projects')}
             aria-label="TERA projects"
           >
             <div className="brandmark">
@@ -437,7 +477,7 @@ function Workspace({
         </div>
         <Tabs
           value={view}
-          onValueChange={(v) => setView(String(v))}
+          onValueChange={(v) => changeView(String(v))}
           className="app-tabs"
         >
           <div className="nav-row">
@@ -446,9 +486,9 @@ function Workspace({
               <select
                 aria-label="Workspace section"
                 value={view}
-                onChange={(event) => setView(event.target.value)}
+                onChange={(event) => changeView(event.target.value)}
               >
-                <option value="projects">Clients & projects</option>
+                <option value="projects">Dashboard</option>
                 <option value="site">Site check</option>
                 <option value="planning">Plan & investment</option>
                 <option value="workspace">Site & plans</option>
@@ -462,7 +502,7 @@ function Workspace({
             </label>
             <TabsList className="main-tabs">
               <TabsTrigger value="projects">
-                <Users size={16} /> Projects
+                <Users size={16} /> Dashboard
               </TabsTrigger>
               <TabsTrigger value="site">
                 <MapPin size={16} /> Site check
@@ -506,14 +546,6 @@ function Workspace({
               }
             />
           </TabsContent>
-          <TabsContent value="projects" className="tab-panel">
-            <ProjectList
-              projects={projects}
-              jobs={jobs}
-              onOpen={openProject}
-              onNew={() => setDialog('new')}
-            />
-          </TabsContent>
           {view !== 'projects' &&
             view !== 'client' &&
             view !== 'site' &&
@@ -521,8 +553,8 @@ function Workspace({
               <div className="project-heading">
                 <div>
                   <div className="breadcrumb">
-                    <button onClick={() => setView('projects')}>
-                      PROJECTS
+                    <button onClick={() => changeView('projects')}>
+                      DASHBOARD
                     </button>
                     <ChevronRight size={12} />
                     <Select
@@ -1067,116 +1099,28 @@ function Workspace({
           >
             <DialogHeader>
               <DialogTitle>
-                {dialog === 'new'
-                  ? 'A new place to begin'
-                  : dialog === 'scale'
-                    ? 'Set a known distance'
-                    : dialog === 'share'
-                      ? 'Share this proposal'
-                      : dialog === 'draw'
-                        ? 'Name your work area'
-                        : dialog === 'intake'
-                          ? 'Field inbox'
-                          : 'Add a project update'}
+                {dialog === 'scale'
+                  ? 'Set a known distance'
+                  : dialog === 'share'
+                    ? 'Share this proposal'
+                    : dialog === 'draw'
+                      ? 'Name your work area'
+                      : dialog === 'intake'
+                        ? 'Field inbox'
+                        : 'Add a project update'}
               </DialogTitle>
               <DialogDescription>
-                {dialog === 'new'
-                  ? 'Create a project with its own scope, files, and client link.'
-                  : dialog === 'scale'
-                    ? 'Click two points on the image, then enter the real distance between them. Use a top-down image.'
-                    : dialog === 'share'
-                      ? `Review revision ${job.revision} before publishing it to the client link.`
-                      : dialog === 'draw'
-                        ? 'Your traced geometry will calculate the quantities.'
-                        : dialog === 'intake'
-                          ? 'Capture a field note here. Configure Telegram routing in Team & setup.'
-                          : 'Keep your client informed about the work on their property.'}
+                {dialog === 'scale'
+                  ? 'Click two points on the image, then enter the real distance between them. Use a top-down image.'
+                  : dialog === 'share'
+                    ? `Review revision ${job.revision} before publishing it to the client link.`
+                    : dialog === 'draw'
+                      ? 'Your traced geometry will calculate the quantities.'
+                      : dialog === 'intake'
+                        ? 'Capture a field note here. Configure Telegram routing in Team & setup.'
+                        : 'Keep your client informed about the work on their property.'}
               </DialogDescription>
             </DialogHeader>
-            {dialog === 'new' && (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  void run(async () => {
-                    const id = await workspace.create({
-                      name: newName.trim(),
-                      client: newClient.trim(),
-                      location: newLocation.trim(),
-                      acres: Number(newAcres) || 0,
-                      template:
-                        newTemplate === 'land' || newTemplate === 'all'
-                          ? 'landscape'
-                          : 'general',
-                      draft: emptyArchitectDraft(newTemplate),
-                    });
-                    setProjectId(id);
-                    setSelected('');
-                    setView('planning');
-                    setDialog(null);
-                    setNewName('');
-                    setNewClient('');
-                    setNewLocation('');
-                    setNewAcres('');
-                    notify(
-                      'Project created and saved. Add a work package to begin.',
-                    );
-                  });
-                }}
-                className="dialog-form"
-              >
-                <label>
-                  Project name
-                  <Input
-                    autoFocus
-                    value={newName}
-                    maxLength={80}
-                    onChange={(e) => setNewName(e.target.value)}
-                    required
-                    placeholder="e.g. North Creek Farm"
-                  />
-                </label>
-                <label>
-                  Client name
-                  <Input
-                    value={newClient}
-                    maxLength={80}
-                    onChange={(e) => setNewClient(e.target.value)}
-                    required
-                    placeholder="Client or family name"
-                  />
-                </label>
-                <TemplateSelect value={newTemplate} onChange={setNewTemplate} />
-                <div className="form-pair">
-                  <label>
-                    Location
-                    <Input
-                      value={newLocation}
-                      onChange={(e) => setNewLocation(e.target.value)}
-                      placeholder="County, state"
-                    />
-                  </label>
-                  <label>
-                    Land area, if applicable (acres)
-                    <Input
-                      type="number"
-                      min="0"
-                      max="1000000"
-                      step=".1"
-                      value={newAcres}
-                      onChange={(e) => setNewAcres(e.target.value)}
-                      placeholder="0.0"
-                    />
-                  </label>
-                </div>
-                <Button
-                  type="submit"
-                  className="primary-action wide"
-                  disabled={busy}
-                >
-                  <Plus size={15} /> Create project
-                </Button>
-              </form>
-            )}
             {dialog === 'scale' && (
               <>
                 <svg

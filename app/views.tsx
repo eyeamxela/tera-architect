@@ -11,6 +11,7 @@ import {
   CheckCheck,
   Clock3,
   FileText,
+  Layers,
   MapPin,
   MessageSquare,
   Plus,
@@ -46,11 +47,13 @@ export function ProjectList({
   jobs,
   onOpen,
   onNew,
+  canCreate = true,
 }: {
   projects: Project[];
   jobs: Record<string, Job>;
   onOpen: (id: string) => void;
   onNew: () => void;
+  canCreate?: boolean;
 }) {
   const [query, setQuery] = useState('');
   const [stage, setStage] = useState('All stages');
@@ -66,12 +69,14 @@ export function ProjectList({
       <div className="view-heading">
         <div>
           <div className="eyebrow">YOUR PRACTICE, IN VIEW</div>
-          <h1>Clients & projects</h1>
-          <p>Every project. Every next step.</p>
+          <h1>Dashboard</h1>
+          <p>Your projects, scopes, and work ahead.</p>
         </div>
-        <Button className="primary-action" onClick={onNew}>
-          <Plus size={16} /> New project
-        </Button>
+        {canCreate && (
+          <Button className="primary-action" onClick={onNew}>
+            <Plus size={16} /> New project
+          </Button>
+        )}
       </div>
       <div className="project-stats">
         <div>
@@ -79,8 +84,12 @@ export function ProjectList({
           <b>{projects.length.toString().padStart(2, '0')}</b>
         </div>
         <div>
-          <span>Acres under planning</span>
-          <b>{projects.reduce((s, p) => s + p.acres, 0).toFixed(1)}</b>
+          <span>Clients</span>
+          <b>
+            {new Set(projects.map((p) => p.client.trim().toLowerCase())).size
+              .toString()
+              .padStart(2, '0')}
+          </b>
         </div>
         <div>
           <span>Awaiting client review</span>
@@ -118,7 +127,7 @@ export function ProjectList({
             aria-label="Search projects"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search properties or clients…"
+            placeholder="Search projects or clients…"
           />
         </div>
         <Select value={stage} onValueChange={(v) => setStage(String(v))}>
@@ -253,18 +262,32 @@ export function ProjectList({
         </div>
         {!filtered.length && (
           <div className="empty-state">
-            <Search />
-            <h3>No matching projects</h3>
-            <p>Try a different property name or clear the stage filter.</p>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setQuery('');
-                setStage('All stages');
-              }}
-            >
-              Clear filters
-            </Button>
+            {projects.length ? (
+              <>
+                <Search />
+                <h3>No matching projects</h3>
+                <p>Try another project name or clear the stage filter.</p>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setQuery('');
+                    setStage('All stages');
+                  }}
+                >
+                  Clear filters
+                </Button>
+              </>
+            ) : (
+              <>
+                <Layers size={28} />
+                <h3>Your projects will live here.</h3>
+                <p>
+                  {canCreate
+                    ? 'Plans, budgets, and client updates, together in one place.'
+                    : 'Projects assigned to you will appear here.'}
+                </p>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -273,8 +296,8 @@ export function ProjectList({
           <i /> PROJECT WORKSPACE
         </span>
         <p>
-          Explore a project, mark up the property, and prepare a scope for the
-          client.
+          Land, architecture, interiors, and custom furniture. One workspace for
+          the whole project.
         </p>
       </div>
     </section>

@@ -808,3 +808,40 @@
     max-height: 180px;
   }
 }
+
+.tera-dashboard-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 36px;
+  border-bottom: 1px solid #dfe3d6;
+  color: #7c856f;
+  font-size: 14px;
+  background: #fafbf6;
+}
+.tera-dashboard-nav > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #384c2d;
+  font-weight: 500;
+}
+.tera-dashboard-error {
+  padding: 16px 36px;
+  color: #984734;
+}
+.tera-dashboard-nav + .projects-view {
+  min-height: calc(100vh - 225px);
+}
+@media (max-width: 640px) {
+  .tera-dashboard-nav {
+    padding: 16px 20px;
+  }
+  .tera-dashboard-nav > span:last-child {
+    font-size: 12px;
+  }
+  .tera-dashboard-error {
+    padding: 14px 20px;
+  }
+}

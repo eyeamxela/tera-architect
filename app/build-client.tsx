@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { Job, Project } from './data';
 import type { Brand } from './brand';
-import { TemplateSelect, emptyArchitectDraft } from './design-workbench';
 
 export type WorkspaceData = {
   brand: Brand;
@@ -258,105 +257,9 @@ export function WorkspaceGate({
         </div>
       </section>
     );
-  if (!data.projects.length)
-    return (
-      <EmptyWorkspace
-        workspace={data}
-        onCreated={() => void load()}
-        onLogout={async () => {
-          await api('/auth/logout', { method: 'POST' });
-          setData(null);
-          setSignin(true);
-        }}
-      />
-    );
   return children(data, mode, async () => {
     await api('/auth/logout', { method: 'POST' });
     setData(null);
     setSignin(true);
   });
-}
-
-function EmptyWorkspace({
-  workspace,
-  onCreated,
-  onLogout,
-}: {
-  workspace: WorkspaceData;
-  onCreated: () => void;
-  onLogout: () => Promise<void>;
-}) {
-  const [template, setTemplate] = useState('architecture');
-  const [name, setName] = useState(''),
-    [client, setClient] = useState(''),
-    [busy, setBusy] = useState(false),
-    [error, setError] = useState('');
-  return (
-    <section className="build-access">
-      <div className="build-access-card">
-        <div className="build-wordmark">TERA</div>
-        <h1>Your first project starts here.</h1>
-        {workspace.actor.role === 'owner' ? (
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              setBusy(true);
-              setError('');
-              try {
-                await api('/projects', {
-                  method: 'POST',
-                  body: {
-                    name,
-                    client,
-                    location: '',
-                    acres: 0,
-                    template:
-                      template === 'land' || template === 'all'
-                        ? 'landscape'
-                        : 'general',
-                    draft: emptyArchitectDraft(template),
-                  },
-                });
-                onCreated();
-              } catch (e) {
-                setError((e as Error).message);
-              } finally {
-                setBusy(false);
-              }
-            }}
-          >
-            <TemplateSelect value={template} onChange={setTemplate} />
-            <label htmlFor="build-client-field-3">
-              Project name
-              <Input
-                id="build-client-field-3"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </label>
-            <label htmlFor="build-client-field-4">
-              Client name
-              <Input
-                id="build-client-field-4"
-                required
-                value={client}
-                onChange={(e) => setClient(e.target.value)}
-              />
-            </label>
-            <Button disabled={busy}>Create project</Button>
-          </form>
-        ) : (
-          <p>
-            Your workspace owner can assign you to a project. Assigned projects
-            will appear here.
-          </p>
-        )}
-        {error && <p role="alert">{error}</p>}
-        <Button variant="ghost" onClick={() => void onLogout()}>
-          Sign out
-        </Button>
-      </div>
-    </section>
-  );
 }
